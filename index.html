@@ -215,8 +215,8 @@ canvas.pad{border:1px dashed var(--line);width:100%;height:130px;touch-action:no
 .photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .photo-slot{border:1px dashed var(--line);min-height:230px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;background:var(--vellum-dim);}
 
-/* Ajuste de imágenes 16:9 con object-fit: contain para NO recortar nada */
-.photo-grid .photo-slot{min-height:0;aspect-ratio:16/9;}
+/* Ajuste de imágenes 4:3 con object-fit: contain */
+.photo-grid .photo-slot{min-height:0;aspect-ratio:4/3;}
 .photo-grid .photo-slot img{width:100%;height:100%;object-fit:contain;max-width:none;max-height:none;background:#f9f9f9;}
 
 .photo-slot .ps-label{
@@ -681,7 +681,7 @@ async function loadPedidoImage(input,id){
   const reader = new FileReader();
   reader.onload = e=>{ 
     setImageSlot(document.getElementById(`${id}-img`), emptyEl, e.target.result); 
-    emptyEl.innerHTML = originalHtml; // Restaurar HTML por si se borra la foto después
+    emptyEl.innerHTML = originalHtml; 
   };
   reader.readAsDataURL(processFile);
 }
@@ -842,7 +842,7 @@ function descargarArchivo(contenido, nombre, tipoMime){
   URL.revokeObjectURL(url);
 }
 
-/* ---------- DESCARGA EN PDF (Informe de obra) — fotos 16:9 sin recortes ---------- */
+/* ---------- DESCARGA EN PDF (Informe de obra) — fotos 4:3 ---------- */
 function buildFotosInformePrint(){
   const pairs = document.querySelectorAll('.photo-pair');
   if(pairs.length===0) return '<p style="font-size:11px;">Sin fotografías registradas.</p>';
@@ -858,11 +858,11 @@ function buildFotosInformePrint(){
         <div style="font-weight:bold; background:#EFEBDF; padding: 6px 10px; margin-bottom: 12px; font-size: 13px; border: 1px solid #ccc; font-family:'Inter', sans-serif;">${escapeHtml(caption)}</div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: start;">
           <div style="text-align: center;">
-            ${antesSrc?`<img src="${antesSrc}" style="width:100%; aspect-ratio:16/9; object-fit:contain; border:1px solid #ccc; background:#f9f9f9;">`:'<div style="aspect-ratio:16/9; width:100%; border:1px dashed #ccc; display:flex; align-items:center; justify-content:center; color:#999; font-size:11px; background:#f9f9f9;">Sin foto</div>'}
+            ${antesSrc?`<img src="${antesSrc}" style="width:100%; aspect-ratio:4/3; object-fit:contain; border:1px solid #ccc; background:#f9f9f9;">`:'<div style="aspect-ratio:4/3; width:100%; border:1px dashed #ccc; display:flex; align-items:center; justify-content:center; color:#999; font-size:11px; background:#f9f9f9;">Sin foto</div>'}
             <div style="font-size:11px; color:#666; text-transform:uppercase; margin-top:6px; font-weight:bold; font-family:'IBM Plex Mono', monospace;">Antes</div>
           </div>
           <div style="text-align: center;">
-            ${despuesSrc?`<img src="${despuesSrc}" style="width:100%; aspect-ratio:16/9; object-fit:contain; border:1px solid #ccc; background:#f9f9f9;">`:'<div style="aspect-ratio:16/9; width:100%; border:1px dashed #ccc; display:flex; align-items:center; justify-content:center; color:#999; font-size:11px; background:#f9f9f9;">Sin foto</div>'}
+            ${despuesSrc?`<img src="${despuesSrc}" style="width:100%; aspect-ratio:4/3; object-fit:contain; border:1px solid #ccc; background:#f9f9f9;">`:'<div style="aspect-ratio:4/3; width:100%; border:1px dashed #ccc; display:flex; align-items:center; justify-content:center; color:#999; font-size:11px; background:#f9f9f9;">Sin foto</div>'}
             <div style="font-size:11px; color:#666; text-transform:uppercase; margin-top:6px; font-weight:bold; font-family:'IBM Plex Mono', monospace;">Después</div>
           </div>
         </div>
