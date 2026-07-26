@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <!-- Librería para convertir HEIC a JPG en el navegador -->
-<script src="https://cdn.jsdelivr.net/npm/heic2any/dist/heic2any.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/heic2any/dist/heic2any.min.js" crossorigin="anonymous"></script>
 <style>
 :root{
   --blueprint:#0F2A3D;
@@ -303,6 +303,7 @@ canvas.pad{border:1px dashed var(--line);width:100%;height:130px;touch-action:no
     <button class="tab-btn" data-tab="medicion"><span class="num">03</span>Medición de cantidades</button>
     <button class="tab-btn" data-tab="informe"><span class="num">04</span>Informe de obra</button>
     <button class="tab-btn" data-tab="inventario"><span class="num">05</span>Inventario</button>
+    <button class="tab-btn" data-tab="maquinaria"><span class="num">06</span>Control maquinaria</button>
   </div>
 
   <!-- TAB 1: REGISTRO DE PEDIDOS (WHATSAPP) -->
@@ -434,6 +435,32 @@ canvas.pad{border:1px dashed var(--line);width:100%;height:130px;touch-action:no
     </div>
   </div>
 
+  <!-- TAB 6: CONTROL DE MAQUINARIA -->
+  <div class="panel" id="panel-maquinaria">
+    <div class="card">
+      <h2><span class="idx">06</span> Control de maquinaria</h2>
+      <p class="sub">Registra el uso diario de cada equipo. El total de horas se calcula solo a partir de la hora de inicio y la hora final.</p>
+      <div class="table-wrap">
+        <table class="data" id="tabla-maquinaria">
+          <thead><tr>
+            <th class="rownum">#</th><th>Fecha</th><th>Equipo</th><th>Descripción</th><th>Operador</th><th>Supervisor</th><th>Hora inicio</th><th>Hora final</th><th>Total horas</th><th></th>
+          </tr></thead>
+          <tbody></tbody>
+          <tfoot>
+            <tr>
+              <td colspan="8" style="text-align:right;font-weight:600;font-family:'IBM Plex Mono',monospace;font-size:11.5px;padding:8px;">TOTAL HORAS DEL DÍA</td>
+              <td colspan="2" style="font-weight:700;font-family:'IBM Plex Mono',monospace;background:var(--vellum-dim);" id="maq-suma-total">0</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <button class="btn ghost small" onclick="addRow('maquinaria')">+ Agregar registro</button>
+      <div style="margin-top:18px;display:flex;justify-content:flex-end;">
+        <button class="btn" style="background:var(--moss);border-color:var(--moss);" onclick="generarExcelMaquinaria()">⬇ Descargar control de maquinaria (Excel)</button>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- PRINT-ONLY CONSOLIDATED REPORT -->
@@ -496,6 +523,18 @@ const rowTemplates = {
     <td><select class="inv-estado"><option>Disponible</option><option>Agotado</option><option>Por pedir</option><option>En préstamo</option></select></td>
     <td><input class="inv-obs" placeholder="Observaciones"></td>
     <td><button class="btn-del" onclick="delRow(this,'inventario')">✕</button></td>
+  `,
+  maquinaria: ()=>`
+    <td class="rownum"></td>
+    <td><input type="date" class="maq-fecha"></td>
+    <td><input class="maq-equipo" placeholder="Ej. Retroexcavadora"></td>
+    <td><input class="maq-desc" placeholder="Descripción de la actividad"></td>
+    <td><input class="maq-operador" placeholder="Nombre del operador"></td>
+    <td><input class="maq-supervisor" placeholder="Nombre del supervisor"></td>
+    <td><input type="time" class="maq-hinicio"></td>
+    <td><input type="time" class="maq-hfinal"></td>
+    <td><input type="number" step="any" class="maq-total" readonly placeholder="0"></td>
+    <td><button class="btn-del" onclick="delRow(this,'maquinaria')">✕</button></td>
   `
 };
 
@@ -512,12 +551,18 @@ function addRow(type){
       inp.addEventListener('input', ()=>calcMedicion(tr));
     });
   }
+  if(type==='maquinaria'){
+    tr.querySelectorAll('.maq-hinicio,.maq-hfinal').forEach(inp=>{
+      inp.addEventListener('input', ()=>calcMaquinaria(tr));
+    });
+  }
   return tr;
 }
 
 function delRow(btn,type){
   btn.closest('tr').remove();
   renumber(type);
+  if(type==='maquinaria') calcSumaMaquinaria();
 }
 
 function renumber(type){
@@ -564,8 +609,34 @@ function calcMedicion(tr){
   tr.querySelector('.med-pendiente').value = Math.round(pendiente*1000)/1000;
 }
 
-/* seed one row for acta, medicion, inventario */
-['acta','medicion','inventario'].forEach(addRow);
+/* ---------- CONTROL DE MAQUINARIA: cálculo de horas ---------- */
+function calcMaquinaria(tr){
+  const hi = tr.querySelector('.maq-hinicio').value;
+  const hf = tr.querySelector('.maq-hfinal').value;
+  const totalInput = tr.querySelector('.maq-total');
+  if(hi && hf){
+    const [h1,m1] = hi.split(':').map(Number);
+    const [h2,m2] = hf.split(':').map(Number);
+    let mins = (h2*60+m2)-(h1*60+m1);
+    if(mins<0) mins += 24*60; // cruza la medianoche
+    totalInput.value = Math.round((mins/60)*100)/100;
+  } else {
+    totalInput.value = '';
+  }
+  calcSumaMaquinaria();
+}
+
+function calcSumaMaquinaria(){
+  let suma = 0;
+  document.querySelectorAll('#tabla-maquinaria tbody tr').forEach(tr=>{
+    suma += parseFloat(tr.querySelector('.maq-total').value)||0;
+  });
+  const el = document.getElementById('maq-suma-total');
+  if(el) el.textContent = Math.round(suma*100)/100;
+}
+
+/* seed one row for acta, medicion, inventario, maquinaria */
+['acta','medicion','inventario','maquinaria'].forEach(addRow);
 
 /* ---------- SIGNATURE PADS ---------- */
 function setupPad(id){
@@ -1036,6 +1107,53 @@ function generarExcelInventario(){
   descargarArchivo(html, `Inventario_${consecutivo}.xls`, 'application/vnd.ms-excel');
 }
 
+/* ---------- DESCARGA EN EXCEL (Control de maquinaria) ---------- */
+function generarExcelMaquinaria(){
+  const proyecto = val('g-proyecto')||'—';
+  const fecha = val('g-fecha')||'—';
+  const consecutivo = val('g-consecutivo')||'—';
+
+  const filas = document.querySelectorAll('#tabla-maquinaria tbody tr');
+  let filasHtml='';
+  let suma = 0;
+  filas.forEach((r,i)=>{
+    const fFecha = r.querySelector('.maq-fecha').value||'—';
+    const equipo = r.querySelector('.maq-equipo').value||'—';
+    const desc = r.querySelector('.maq-desc').value||'—';
+    const operador = r.querySelector('.maq-operador').value||'—';
+    const supervisor = r.querySelector('.maq-supervisor').value||'—';
+    const hinicio = r.querySelector('.maq-hinicio').value||'—';
+    const hfinal = r.querySelector('.maq-hfinal').value||'—';
+    const total = r.querySelector('.maq-total').value||'0';
+    suma += parseFloat(total)||0;
+    filasHtml += `<tr><td>${i+1}</td><td>${escapeHtml(fFecha)}</td><td>${escapeHtml(equipo)}</td><td>${escapeHtml(desc)}</td><td>${escapeHtml(operador)}</td><td>${escapeHtml(supervisor)}</td><td>${escapeHtml(hinicio)}</td><td>${escapeHtml(hfinal)}</td><td>${escapeHtml(total)}</td></tr>`;
+  });
+  suma = Math.round(suma*100)/100;
+
+  const html = `
+    <html xmlns:x="urn:schemas-microsoft-com:office:excel">
+    <head><meta charset="utf-8">
+    <style>
+      td,th{border:1px solid #ccc;padding:4px 6px;font-family:Calibri,Arial,sans-serif;font-size:11px;}
+      th{background:#0F2A3D;color:#fff;text-transform:uppercase;}
+      .tit{font-weight:bold;font-size:14px;}
+    </style>
+    </head>
+    <body>
+      <table>
+        <tr><td class="tit" colspan="9">Control de maquinaria — Informe N.° ${escapeHtml(consecutivo)}</td></tr>
+        <tr><td><b>Proyecto</b></td><td colspan="3">${escapeHtml(proyecto)}</td><td><b>Fecha</b></td><td colspan="4">${escapeHtml(fecha)}</td></tr>
+        <tr><td colspan="9"></td></tr>
+        <tr><th>#</th><th>Fecha</th><th>Equipo</th><th>Descripción</th><th>Operador</th><th>Supervisor</th><th>Hora inicio</th><th>Hora final</th><th>Total horas</th></tr>
+        ${filasHtml}
+        <tr><td colspan="8"><b>TOTAL HORAS DEL DÍA</b></td><td><b>${suma}</b></td></tr>
+      </table>
+    </body>
+    </html>
+  `;
+  descargarArchivo(html, `Control_maquinaria_${consecutivo}.xls`, 'application/vnd.ms-excel');
+}
+
 /* ---------- GUARDAR / ABRIR PROYECTO (.json) ---------- */
 function exportarProyecto(){
   const data = {
@@ -1088,6 +1206,12 @@ function exportarProyecto(){
       desc:r.querySelector('.inv-desc').value, cant:r.querySelector('.inv-cant').value,
       unidad:r.querySelector('.inv-unidad').value, estado:r.querySelector('.inv-estado').value,
       obs:r.querySelector('.inv-obs').value
+    })),
+    maquinaria: [...document.querySelectorAll('#tabla-maquinaria tbody tr')].map(r=>({
+      fecha:r.querySelector('.maq-fecha').value, equipo:r.querySelector('.maq-equipo').value,
+      desc:r.querySelector('.maq-desc').value, operador:r.querySelector('.maq-operador').value,
+      supervisor:r.querySelector('.maq-supervisor').value, hinicio:r.querySelector('.maq-hinicio').value,
+      hfinal:r.querySelector('.maq-hfinal').value
     }))
   };
   const nombre = `${(data.global.proyecto||'proyecto').replace(/[^a-z0-9]+/gi,'_')}_${data.global.consecutivo||'sn'}.json`;
@@ -1191,6 +1315,21 @@ function cargarProyecto(data){
     tr.querySelector('.inv-unidad').value = it.unidad||'';
     if(it.estado) tr.querySelector('.inv-estado').value = it.estado;
     tr.querySelector('.inv-obs').value = it.obs||'';
+  });
+
+  /* control de maquinaria */
+  document.querySelector('#tabla-maquinaria tbody').innerHTML='';
+  const maqItems = (data.maquinaria&&data.maquinaria.length)?data.maquinaria:[{}];
+  maqItems.forEach(it=>{
+    const tr = addRow('maquinaria');
+    tr.querySelector('.maq-fecha').value = it.fecha||'';
+    tr.querySelector('.maq-equipo').value = it.equipo||'';
+    tr.querySelector('.maq-desc').value = it.desc||'';
+    tr.querySelector('.maq-operador').value = it.operador||'';
+    tr.querySelector('.maq-supervisor').value = it.supervisor||'';
+    tr.querySelector('.maq-hinicio').value = it.hinicio||'';
+    tr.querySelector('.maq-hfinal').value = it.hfinal||'';
+    calcMaquinaria(tr);
   });
 
   alert('Proyecto cargado. Puedes seguir trabajando donde lo dejaste.');
