@@ -178,6 +178,16 @@ table.data tbody tr:nth-child(odd){background:rgba(15,42,61,0.02);}
 .med-cantidad[readonly]{background:var(--vellum-dim) !important;}
 .med-pendiente[readonly]{background:var(--vellum-dim) !important;color:var(--ink-dim);}
 
+/* Control de maquinaria: dos secciones de hora en la misma fila */
+.maq-time-wrap{display:flex;flex-direction:column;gap:4px;min-width:110px;}
+.maq-time-wrap .maq-time-row{display:flex;align-items:center;gap:5px;}
+.maq-time-wrap .maq-time-row span{
+  font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--ink-dim);
+  width:14px;flex:none;text-align:center;
+}
+.maq-time-wrap input{font-size:11.5px !important;padding:5px 4px !important;border:1px solid var(--line) !important;background:#fff !important;}
+.maq-total[readonly]{background:var(--vellum-dim) !important;font-weight:600;}
+
 .btn{
   font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:13px;
   border:1px solid var(--blueprint); background:var(--blueprint); color:var(--vellum);
@@ -439,7 +449,7 @@ canvas.pad{border:1px dashed var(--line);width:100%;height:130px;touch-action:no
   <div class="panel" id="panel-maquinaria">
     <div class="card">
       <h2><span class="idx">06</span> Control de maquinaria</h2>
-      <p class="sub">Registra el uso diario de cada equipo. El total de horas se calcula solo a partir de la hora de inicio y la hora final.</p>
+      <p class="sub">Registra el uso diario de cada equipo. Cada fila admite dos rangos horarios (ej. 8 a.m.–12 p.m. y 1 p.m.–3:30 p.m.); el total de horas suma ambos rangos automáticamente.</p>
       <div class="table-wrap">
         <table class="data" id="tabla-maquinaria">
           <thead><tr>
@@ -531,8 +541,18 @@ const rowTemplates = {
     <td><input class="maq-desc" placeholder="Descripción de la actividad"></td>
     <td><input class="maq-operador" placeholder="Nombre del operador"></td>
     <td><input class="maq-supervisor" placeholder="Nombre del supervisor"></td>
-    <td><input type="time" class="maq-hinicio"></td>
-    <td><input type="time" class="maq-hfinal"></td>
+    <td>
+      <div class="maq-time-wrap">
+        <div class="maq-time-row"><span>1</span><input type="time" class="maq-hinicio1"></div>
+        <div class="maq-time-row"><span>2</span><input type="time" class="maq-hinicio2"></div>
+      </div>
+    </td>
+    <td>
+      <div class="maq-time-wrap">
+        <div class="maq-time-row"><span>1</span><input type="time" class="maq-hfinal1"></div>
+        <div class="maq-time-row"><span>2</span><input type="time" class="maq-hfinal2"></div>
+      </div>
+    </td>
     <td><input type="number" step="any" class="maq-total" readonly placeholder="0"></td>
     <td><button class="btn-del" onclick="delRow(this,'maquinaria')">✕</button></td>
   `
@@ -552,7 +572,7 @@ function addRow(type){
     });
   }
   if(type==='maquinaria'){
-    tr.querySelectorAll('.maq-hinicio,.maq-hfinal').forEach(inp=>{
+    tr.querySelectorAll('.maq-hinicio1,.maq-hfinal1,.maq-hinicio2,.maq-hfinal2').forEach(inp=>{
       inp.addEventListener('input', ()=>calcMaquinaria(tr));
     });
   }
@@ -609,17 +629,29 @@ function calcMedicion(tr){
   tr.querySelector('.med-pendiente').value = Math.round(pendiente*1000)/1000;
 }
 
-/* ---------- CONTROL DE MAQUINARIA: cálculo de horas ---------- */
+/* ---------- CONTROL DE MAQUINARIA: cálculo de horas (2 secciones por fila) ---------- */
+function minutosEntre(hi,hf){
+  if(!hi || !hf) return 0;
+  const [h1,m1] = hi.split(':').map(Number);
+  const [h2,m2] = hf.split(':').map(Number);
+  let mins = (h2*60+m2)-(h1*60+m1);
+  if(mins<0) mins += 24*60; // cruza la medianoche
+  return mins;
+}
+
 function calcMaquinaria(tr){
-  const hi = tr.querySelector('.maq-hinicio').value;
-  const hf = tr.querySelector('.maq-hfinal').value;
+  const hi1 = tr.querySelector('.maq-hinicio1').value;
+  const hf1 = tr.querySelector('.maq-hfinal1').value;
+  const hi2 = tr.querySelector('.maq-hinicio2').value;
+  const hf2 = tr.querySelector('.maq-hfinal2').value;
   const totalInput = tr.querySelector('.maq-total');
-  if(hi && hf){
-    const [h1,m1] = hi.split(':').map(Number);
-    const [h2,m2] = hf.split(':').map(Number);
-    let mins = (h2*60+m2)-(h1*60+m1);
-    if(mins<0) mins += 24*60; // cruza la medianoche
-    totalInput.value = Math.round((mins/60)*100)/100;
+
+  const mins1 = minutosEntre(hi1,hf1);
+  const mins2 = minutosEntre(hi2,hf2);
+  const minsTotal = mins1 + mins2;
+
+  if((hi1 && hf1) || (hi2 && hf2)){
+    totalInput.value = Math.round((minsTotal/60)*100)/100;
   } else {
     totalInput.value = '';
   }
@@ -1122,8 +1154,12 @@ function generarExcelMaquinaria(){
     const desc = r.querySelector('.maq-desc').value||'—';
     const operador = r.querySelector('.maq-operador').value||'—';
     const supervisor = r.querySelector('.maq-supervisor').value||'—';
-    const hinicio = r.querySelector('.maq-hinicio').value||'—';
-    const hfinal = r.querySelector('.maq-hfinal').value||'—';
+    const hi1 = r.querySelector('.maq-hinicio1').value;
+    const hf1 = r.querySelector('.maq-hfinal1').value;
+    const hi2 = r.querySelector('.maq-hinicio2').value;
+    const hf2 = r.querySelector('.maq-hfinal2').value;
+    const hinicio = [hi1,hi2].filter(Boolean).join(' / ')||'—';
+    const hfinal = [hf1,hf2].filter(Boolean).join(' / ')||'—';
     const total = r.querySelector('.maq-total').value||'0';
     suma += parseFloat(total)||0;
     filasHtml += `<tr><td>${i+1}</td><td>${escapeHtml(fFecha)}</td><td>${escapeHtml(equipo)}</td><td>${escapeHtml(desc)}</td><td>${escapeHtml(operador)}</td><td>${escapeHtml(supervisor)}</td><td>${escapeHtml(hinicio)}</td><td>${escapeHtml(hfinal)}</td><td>${escapeHtml(total)}</td></tr>`;
@@ -1210,8 +1246,9 @@ function exportarProyecto(){
     maquinaria: [...document.querySelectorAll('#tabla-maquinaria tbody tr')].map(r=>({
       fecha:r.querySelector('.maq-fecha').value, equipo:r.querySelector('.maq-equipo').value,
       desc:r.querySelector('.maq-desc').value, operador:r.querySelector('.maq-operador').value,
-      supervisor:r.querySelector('.maq-supervisor').value, hinicio:r.querySelector('.maq-hinicio').value,
-      hfinal:r.querySelector('.maq-hfinal').value
+      supervisor:r.querySelector('.maq-supervisor').value,
+      hinicio1:r.querySelector('.maq-hinicio1').value, hfinal1:r.querySelector('.maq-hfinal1').value,
+      hinicio2:r.querySelector('.maq-hinicio2').value, hfinal2:r.querySelector('.maq-hfinal2').value
     }))
   };
   const nombre = `${(data.global.proyecto||'proyecto').replace(/[^a-z0-9]+/gi,'_')}_${data.global.consecutivo||'sn'}.json`;
@@ -1327,8 +1364,11 @@ function cargarProyecto(data){
     tr.querySelector('.maq-desc').value = it.desc||'';
     tr.querySelector('.maq-operador').value = it.operador||'';
     tr.querySelector('.maq-supervisor').value = it.supervisor||'';
-    tr.querySelector('.maq-hinicio').value = it.hinicio||'';
-    tr.querySelector('.maq-hfinal').value = it.hfinal||'';
+    // Compatibilidad con archivos antiguos (una sola hora inicio/final)
+    tr.querySelector('.maq-hinicio1').value = it.hinicio1||it.hinicio||'';
+    tr.querySelector('.maq-hfinal1').value = it.hfinal1||it.hfinal||'';
+    tr.querySelector('.maq-hinicio2').value = it.hinicio2||'';
+    tr.querySelector('.maq-hfinal2').value = it.hfinal2||'';
     calcMaquinaria(tr);
   });
 
