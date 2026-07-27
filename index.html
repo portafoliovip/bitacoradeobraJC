@@ -453,12 +453,12 @@ canvas.pad{border:1px dashed var(--line);width:100%;height:130px;touch-action:no
       <div class="table-wrap">
         <table class="data" id="tabla-maquinaria">
           <thead><tr>
-            <th class="rownum">#</th><th>Fecha</th><th>Equipo</th><th>Descripción</th><th>Operador</th><th>Supervisor</th><th>Hora inicio</th><th>Hora final</th><th>Total horas</th><th></th>
+            <th class="rownum">#</th><th>Fecha</th><th>Equipo</th><th>N.° Remisión</th><th>Descripción</th><th>Operador</th><th>Supervisor</th><th>Hora inicio</th><th>Hora final</th><th>Total horas</th><th></th>
           </tr></thead>
           <tbody></tbody>
           <tfoot>
             <tr>
-              <td colspan="8" style="text-align:right;font-weight:600;font-family:'IBM Plex Mono',monospace;font-size:11.5px;padding:8px;">TOTAL HORAS DEL DÍA</td>
+              <td colspan="9" style="text-align:right;font-weight:600;font-family:'IBM Plex Mono',monospace;font-size:11.5px;padding:8px;">TOTAL HORAS DEL DÍA</td>
               <td colspan="2" style="font-weight:700;font-family:'IBM Plex Mono',monospace;background:var(--vellum-dim);" id="maq-suma-total">0</td>
             </tr>
           </tfoot>
@@ -538,6 +538,7 @@ const rowTemplates = {
     <td class="rownum"></td>
     <td><input type="date" class="maq-fecha"></td>
     <td><input class="maq-equipo" placeholder="Ej. Retroexcavadora"></td>
+    <td><input class="maq-remision" placeholder="N.° remisión"></td>
     <td><input class="maq-desc" placeholder="Descripción de la actividad"></td>
     <td><input class="maq-operador" placeholder="Nombre del operador"></td>
     <td><input class="maq-supervisor" placeholder="Nombre del supervisor"></td>
@@ -1151,6 +1152,7 @@ function generarExcelMaquinaria(){
   filas.forEach((r,i)=>{
     const fFecha = r.querySelector('.maq-fecha').value||'—';
     const equipo = r.querySelector('.maq-equipo').value||'—';
+    const remision = r.querySelector('.maq-remision').value||'—';
     const desc = r.querySelector('.maq-desc').value||'—';
     const operador = r.querySelector('.maq-operador').value||'—';
     const supervisor = r.querySelector('.maq-supervisor').value||'—';
@@ -1162,7 +1164,7 @@ function generarExcelMaquinaria(){
     const hfinal = [hf1,hf2].filter(Boolean).join(' / ')||'—';
     const total = r.querySelector('.maq-total').value||'0';
     suma += parseFloat(total)||0;
-    filasHtml += `<tr><td>${i+1}</td><td>${escapeHtml(fFecha)}</td><td>${escapeHtml(equipo)}</td><td>${escapeHtml(desc)}</td><td>${escapeHtml(operador)}</td><td>${escapeHtml(supervisor)}</td><td>${escapeHtml(hinicio)}</td><td>${escapeHtml(hfinal)}</td><td>${escapeHtml(total)}</td></tr>`;
+    filasHtml += `<tr><td>${i+1}</td><td>${escapeHtml(fFecha)}</td><td>${escapeHtml(equipo)}</td><td>${escapeHtml(remision)}</td><td>${escapeHtml(desc)}</td><td>${escapeHtml(operador)}</td><td>${escapeHtml(supervisor)}</td><td>${escapeHtml(hinicio)}</td><td>${escapeHtml(hfinal)}</td><td>${escapeHtml(total)}</td></tr>`;
   });
   suma = Math.round(suma*100)/100;
 
@@ -1177,12 +1179,12 @@ function generarExcelMaquinaria(){
     </head>
     <body>
       <table>
-        <tr><td class="tit" colspan="9">Control de maquinaria — Informe N.° ${escapeHtml(consecutivo)}</td></tr>
-        <tr><td><b>Proyecto</b></td><td colspan="3">${escapeHtml(proyecto)}</td><td><b>Fecha</b></td><td colspan="4">${escapeHtml(fecha)}</td></tr>
-        <tr><td colspan="9"></td></tr>
-        <tr><th>#</th><th>Fecha</th><th>Equipo</th><th>Descripción</th><th>Operador</th><th>Supervisor</th><th>Hora inicio</th><th>Hora final</th><th>Total horas</th></tr>
+        <tr><td class="tit" colspan="10">Control de maquinaria — Informe N.° ${escapeHtml(consecutivo)}</td></tr>
+        <tr><td><b>Proyecto</b></td><td colspan="3">${escapeHtml(proyecto)}</td><td><b>Fecha</b></td><td colspan="5">${escapeHtml(fecha)}</td></tr>
+        <tr><td colspan="10"></td></tr>
+        <tr><th>#</th><th>Fecha</th><th>Equipo</th><th>N.° Remisión</th><th>Descripción</th><th>Operador</th><th>Supervisor</th><th>Hora inicio</th><th>Hora final</th><th>Total horas</th></tr>
         ${filasHtml}
-        <tr><td colspan="8"><b>TOTAL HORAS DEL DÍA</b></td><td><b>${suma}</b></td></tr>
+        <tr><td colspan="9"><b>TOTAL HORAS DEL DÍA</b></td><td><b>${suma}</b></td></tr>
       </table>
     </body>
     </html>
@@ -1245,6 +1247,7 @@ function exportarProyecto(){
     })),
     maquinaria: [...document.querySelectorAll('#tabla-maquinaria tbody tr')].map(r=>({
       fecha:r.querySelector('.maq-fecha').value, equipo:r.querySelector('.maq-equipo').value,
+      remision:r.querySelector('.maq-remision').value,
       desc:r.querySelector('.maq-desc').value, operador:r.querySelector('.maq-operador').value,
       supervisor:r.querySelector('.maq-supervisor').value,
       hinicio1:r.querySelector('.maq-hinicio1').value, hfinal1:r.querySelector('.maq-hfinal1').value,
@@ -1361,6 +1364,7 @@ function cargarProyecto(data){
     const tr = addRow('maquinaria');
     tr.querySelector('.maq-fecha').value = it.fecha||'';
     tr.querySelector('.maq-equipo').value = it.equipo||'';
+    tr.querySelector('.maq-remision').value = it.remision||'';
     tr.querySelector('.maq-desc').value = it.desc||'';
     tr.querySelector('.maq-operador').value = it.operador||'';
     tr.querySelector('.maq-supervisor').value = it.supervisor||'';
