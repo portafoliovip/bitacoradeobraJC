@@ -255,7 +255,7 @@ table.data tbody tr:nth-child(odd){background:rgba(15,42,61,0.02);}
 .pedido-img-slot input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:3;}
 .pedido-img-slot .ps-empty{font-size:11.5px;color:var(--ink-dim);text-align:center;padding:0 10px;z-index:1;}
 
-/* Photo pairs (antes/después) */
+/* Photo pairs (modificado para múltiples fotos) */
 .photo-pair{border:1px solid var(--line);background:#fff;padding:14px;margin-bottom:14px;position:relative;}
 .photo-pair .pp-head{display:flex;gap:10px;align-items:flex-end;margin-bottom:10px;}
 .photo-pair .pp-head .field{flex:1;}
@@ -263,12 +263,6 @@ table.data tbody tr:nth-child(odd){background:rgba(15,42,61,0.02);}
 @media(max-width:600px){.photo-grid{grid-template-columns:1fr;}}
 
 .photo-slot{border:1px dashed var(--line);aspect-ratio:4/3;max-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;background:var(--vellum-dim);}
-.photo-slot .ps-label{
-  position:absolute;top:6px;left:6px;
-  font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.05em;
-  background:var(--blueprint);color:var(--vellum);padding:2px 7px;text-transform:uppercase;
-  z-index:2;
-}
 .photo-slot img{width:100%;height:100%;object-fit:contain;background:#f9f9f9;display:block;}
 .photo-slot input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:3;}
 .photo-slot .ps-empty{font-size:11.5px;color:var(--ink-dim);text-align:center;padding:0 10px;z-index:1;}
@@ -311,8 +305,7 @@ table.data tbody tr:nth-child(odd){background:rgba(15,42,61,0.02);}
   #printArea .p-pedido-card .ped-text{font-size:10.5px;white-space:pre-wrap;margin:0 0 4px;}
 
   /* -----------------------------------------------------------
-     MODIFICACIÓN: Fotos informe ajustadas en 4 espacios fijos 
-     por hoja en PDF (Alturas fijas para evitar mover márgenes)
+     MODIFICACIÓN: Fotos informe adaptadas dinámicamente
   -------------------------------------------------------------*/
   #printArea .p-foto-row{
     page-break-inside:avoid; margin-bottom:20px; border:1px solid #ddd; padding:12px; background:#fff;
@@ -400,7 +393,7 @@ table.data tbody tr:nth-child(odd){background:rgba(15,42,61,0.02);}
   <div class="panel" id="panel-informe">
     <div class="card">
       <h2><span class="idx">02</span> Informe de obra</h2>
-      <p class="sub">Describe las actividades del día y realiza el registro fotográfico. Se organizará en 4 cuadrantes fijos por página en el PDF.</p>
+      <p class="sub">Describe las actividades del día y realiza el registro fotográfico. Se organizará en cuadrantes fijos por página en el PDF.</p>
       <div class="field">
         <label>Descripción general de actividades</label>
         <textarea id="i-actividades" placeholder="¿Qué se ejecutó en la jornada?" oninput="autoGuardar()"></textarea>
@@ -412,8 +405,8 @@ table.data tbody tr:nth-child(odd){background:rgba(15,42,61,0.02);}
     </div>
 
     <div class="card">
-      <h2>Registro fotográfico — antes / después</h2>
-      <p class="sub">Agrega los puntos fotográficos. Se mostrarán en espacios amplios de tamaño fijo que cubren el máximo disponible.</p>
+      <h2>Registro fotográfico</h2>
+      <p class="sub">Agrega los puntos fotográficos y añade más imágenes si lo necesitas. Se mostrarán en espacios amplios que cubren el máximo disponible.</p>
       <div id="photo-pairs"></div>
       <button class="btn ghost small" onclick="addPhotoPair(); autoGuardar();">+ Agregar punto fotográfico</button>
       <div style="margin-top:18px;display:flex;justify-content:flex-end;align-items:center;gap:12px;">
@@ -721,8 +714,10 @@ function setImageSlot(imgEl, emptyEl, dataURL){
   if(emptyEl) emptyEl.style.display='none';
 }
 
-/* ---------- PHOTO PAIRS (antes/después) ---------- */
+/* ---------- PHOTO PAIRS (Modificado para multiples fotos) ---------- */
 let photoPairCount=0;
+let photoSlotCount=0;
+
 function addPhotoPair(){
   photoPairCount++;
   const id = 'pp'+photoPairCount;
@@ -734,25 +729,36 @@ function addPhotoPair(){
     <div class="pp-head">
       <div class="field"><label>Punto / actividad documentada</label><input class="pp-caption" placeholder="Ej. Muro fachada norte" oninput="autoGuardar()"></div>
     </div>
-    <div class="photo-grid">
-      ${photoSlot(id,'antes','Antes')}
-      ${photoSlot(id,'despues','Después')}
+    <div class="photo-grid" id="${id}-grid">
+      ${photoSlot(id,'foto1')}
+      ${photoSlot(id,'foto2')}
+    </div>
+    <div style="margin-top:14px;display:flex;justify-content:flex-end;">
+      <button class="btn ghost small" onclick="addPhotoToPoint('${id}'); autoGuardar();">+ Añadir otra foto a este punto</button>
     </div>
   `;
   document.getElementById('photo-pairs').appendChild(wrap);
   return wrap;
 }
 
-function photoSlot(id,key,label){
+function addPhotoToPoint(pointId) {
+  photoSlotCount++;
+  const grid = document.getElementById(`${pointId}-grid`);
+  const key = 'extra' + photoSlotCount;
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = photoSlot(pointId, key);
+  grid.appendChild(tempDiv.firstElementChild);
+}
+
+function photoSlot(pointId, key){
   return `
-    <div class="photo-slot" id="${id}-${key}-slot">
-      <span class="ps-label">${label}</span>
-      <div class="ps-empty" id="${id}-${key}-empty">
+    <div class="photo-slot" id="${pointId}-${key}-slot">
+      <div class="ps-empty" id="${pointId}-${key}-empty">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5B6770" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="1"/><circle cx="8.5" cy="10.5" r="1.5"/><path d="M21 15l-5-5L5 19"/></svg>
         Subir foto
       </div>
-      <img id="${id}-${key}-img" style="display:none;">
-      <input type="file" accept="image/*, .heic, .HEIC, .heif, .HEIF" onchange="loadPhoto(this,'${id}','${key}')">
+      <img id="${pointId}-${key}-img" style="display:none;">
+      <input type="file" accept="image/*, .heic, .HEIC, .heif, .HEIF" onchange="loadPhoto(this,'${pointId}','${key}')">
     </div>
   `;
 }
@@ -852,31 +858,33 @@ function generarPDFPedido(){
   window.print();
 }
 
-/* ---------- PDF: INFORME DE OBRA (4 ESPACIOS FIJOS) ---------- */
+/* ---------- PDF: INFORME DE OBRA ---------- */
 function buildFotosInformePrint(){
   const pairs = document.querySelectorAll('.photo-pair');
   if(pairs.length===0) return '<p style="font-size:11px;">Sin fotografías registradas.</p>';
   let out='';
   pairs.forEach(p=>{
     const caption = p.querySelector('.pp-caption').value || 'Sin descripción de punto';
-    const antesImg = p.querySelector(`img[id$="-antes-img"]`);
-    const despuesImg = p.querySelector(`img[id$="-despues-img"]`);
-    const antesSrc = antesImg && antesImg.src && antesImg.style.display!=='none' ? antesImg.src : '';
-    const despuesSrc = despuesImg && despuesImg.src && despuesImg.style.display!=='none' ? despuesImg.src : '';
     
-    // El elemento vacío ahora también escala automáticamente para no descuadrar los tamaños
+    // Obtenemos todas las imágenes válidas del punto
+    const imgElements = p.querySelectorAll('.photo-grid img');
+    let gridHtml = '';
+    
+    imgElements.forEach((img, idx) => {
+      const src = (img && img.src && img.style.display!=='none') ? img.src : '';
+      gridHtml += `
+        <div class="p-foto-item">
+          ${src ? `<img src="${src}">` : '<div style="height:100%;flex-grow:1;border:1px dashed #ccc;display:flex;align-items:center;justify-content:center;color:#999;font-size:12px;background:#f9f9f9;">Sin foto</div>'}
+          <div class="p-foto-label">Foto ${idx + 1}</div>
+        </div>
+      `;
+    });
+    
     out += `
       <div class="p-foto-row">
         <div class="p-foto-title">${escapeHtml(caption)}</div>
         <div class="p-foto-grid">
-          <div class="p-foto-item">
-            ${antesSrc?`<img src="${antesSrc}">`:'<div style="height:100%;flex-grow:1;border:1px dashed #ccc;display:flex;align-items:center;justify-content:center;color:#999;font-size:12px;background:#f9f9f9;">Sin foto antes</div>'}
-            <div class="p-foto-label">Antes</div>
-          </div>
-          <div class="p-foto-item">
-            ${despuesSrc?`<img src="${despuesSrc}">`:'<div style="height:100%;flex-grow:1;border:1px dashed #ccc;display:flex;align-items:center;justify-content:center;color:#999;font-size:12px;background:#f9f9f9;">Sin foto después</div>'}
-            <div class="p-foto-label">Después</div>
-          </div>
+          ${gridHtml}
         </div>
       </div>
     `;
@@ -1047,12 +1055,14 @@ function recolectarDatosProyecto(){
     informe: {
       actividades: val('i-actividades'), observaciones: val('i-observaciones'),
       fotos: [...document.querySelectorAll('.photo-pair')].map(p=>{
-        const antes = p.querySelector('img[id$="-antes-img"]');
-        const despues = p.querySelector('img[id$="-despues-img"]');
+        const imagenes = [...p.querySelectorAll('.photo-grid img')].map(img => 
+          (img && img.style.display !== 'none') ? img.src : ''
+        );
         return {
           caption: p.querySelector('.pp-caption').value,
-          antes: (antes && antes.style.display!=='none') ? antes.src : '',
-          despues: (despues && despues.style.display!=='none') ? despues.src : ''
+          imagenes: imagenes,
+          antes: imagenes[0] || '', // Mantenido por compatibilidad
+          despues: imagenes[1] || '' // Mantenido por compatibilidad
         };
       })
     },
@@ -1124,13 +1134,42 @@ function cargarProyectoEnFormulario(data){
   /* informe */
   const inf = data.informe || {};
   setVal('i-actividades',inf.actividades); setVal('i-observaciones',inf.observaciones);
-  document.getElementById('photo-pairs').innerHTML=''; photoPairCount=0;
+  document.getElementById('photo-pairs').innerHTML=''; photoPairCount=0; photoSlotCount=0;
+  
   const fotos = (inf.fotos&&inf.fotos.length)?inf.fotos:[{}];
   fotos.forEach(f=>{
     const pair = addPhotoPair();
     pair.querySelector('.pp-caption').value = f.caption||'';
-    if(f.antes) setImageSlot(pair.querySelector('img[id$="-antes-img"]'), pair.querySelector('div[id$="-antes-empty"]'), f.antes);
-    if(f.despues) setImageSlot(pair.querySelector('img[id$="-despues-img"]'), pair.querySelector('div[id$="-despues-empty"]'), f.despues);
+    
+    const grid = pair.querySelector('.photo-grid');
+    grid.innerHTML = ''; // Limpiamos los slots generados por defecto
+    
+    let imagenesACargar = [];
+    if (f.imagenes && f.imagenes.length > 0) {
+      imagenesACargar = f.imagenes;
+    } else {
+      // Compatibilidad si se carga un JSON antiguo
+      if (f.antes !== undefined || f.despues !== undefined) {
+        imagenesACargar = [f.antes || '', f.despues || ''];
+      }
+    }
+    
+    // Garantizar que al menos hayan 2 espacios visuales si está vacío
+    if (imagenesACargar.length === 0) imagenesACargar = ['', '']; 
+    
+    imagenesACargar.forEach(src => {
+      photoSlotCount++;
+      const key = 'foto' + photoSlotCount;
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = photoSlot(pair.id, key);
+      grid.appendChild(tempDiv.firstElementChild);
+      
+      if (src) {
+        const imgEl = pair.querySelector(`#${pair.id}-${key}-img`);
+        const emptyEl = pair.querySelector(`#${pair.id}-${key}-empty`);
+        if (imgEl && emptyEl) setImageSlot(imgEl, emptyEl, src);
+      }
+    });
   });
 
   /* inventario */
