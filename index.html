@@ -309,11 +309,9 @@ canvas.pad{border:1px dashed var(--line);width:100%;height:130px;touch-action:no
 
   <div class="tabs">
     <button class="tab-btn active" data-tab="pedido"><span class="num">01</span>Pedido de materiales</button>
-    <button class="tab-btn" data-tab="acta"><span class="num">02</span>Acta de entrega</button>
-    <button class="tab-btn" data-tab="medicion"><span class="num">03</span>Medición de cantidades</button>
-    <button class="tab-btn" data-tab="informe"><span class="num">04</span>Informe de obra</button>
-    <button class="tab-btn" data-tab="inventario"><span class="num">05</span>Inventario</button>
-    <button class="tab-btn" data-tab="maquinaria"><span class="num">06</span>Control maquinaria</button>
+    <button class="tab-btn" data-tab="informe"><span class="num">02</span>Informe de obra</button>
+    <button class="tab-btn" data-tab="inventario"><span class="num">03</span>Inventario</button>
+    <button class="tab-btn" data-tab="maquinaria"><span class="num">04</span>Control maquinaria</button>
   </div>
 
   <!-- TAB 1: REGISTRO DE PEDIDOS (WHATSAPP) -->
@@ -330,78 +328,10 @@ canvas.pad{border:1px dashed var(--line);width:100%;height:130px;touch-action:no
     </div>
   </div>
 
-  <!-- TAB 2: ACTA DE ENTREGA -->
-  <div class="panel" id="panel-acta">
-    <div class="card">
-      <h2><span class="idx">02</span> Acta de entrega</h2>
-      <p class="sub">Deja constancia de la entrega y recibo de materiales, herramientas o trabajos en obra.</p>
-      <div class="field-row">
-        <div class="field"><label>Entregado por</label><input id="a-entrega-nombre"></div>
-        <div class="field"><label>Cargo</label><input id="a-entrega-cargo"></div>
-        <div class="field"><label>Recibido por</label><input id="a-recibe-nombre"></div>
-        <div class="field"><label>Cargo</label><input id="a-recibe-cargo"></div>
-        <div class="field"><label>Fecha y hora</label><input type="datetime-local" id="a-fecha"></div>
-      </div>
-      <div class="table-wrap">
-        <table class="data" id="tabla-acta">
-          <thead><tr>
-            <th class="rownum">#</th><th>Descripción</th><th>Cantidad</th><th>Unidad</th><th>Observaciones</th><th></th>
-          </tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-      <button class="btn ghost small" onclick="addRow('acta')">+ Agregar ítem</button>
-
-      <div class="field" style="margin-top:16px;">
-        <label>Observaciones generales del acta</label>
-        <textarea id="a-observaciones" placeholder="Detalles adicionales sobre la entrega..."></textarea>
-      </div>
-
-      <div class="sig-block">
-        <div class="sig-card">
-          <label>Firma — quien entrega</label>
-          <canvas class="pad" id="sig-entrega"></canvas>
-          <img class="sig-print-img" id="sig-entrega-img">
-          <div class="sig-actions"><button class="btn ghost small" onclick="clearSig('sig-entrega')">Limpiar firma</button></div>
-        </div>
-        <div class="sig-card">
-          <label>Firma — quien recibe</label>
-          <canvas class="pad" id="sig-recibe"></canvas>
-          <img class="sig-print-img" id="sig-recibe-img">
-          <div class="sig-actions"><button class="btn ghost small" onclick="clearSig('sig-recibe')">Limpiar firma</button></div>
-        </div>
-      </div>
-
-      <div style="margin-top:18px;display:flex;justify-content:flex-end;">
-        <button class="btn" style="background:var(--moss);border-color:var(--moss);" onclick="generarExcelActa()">⬇ Descargar acta (Excel)</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- TAB 3: MEDICIÓN DE CANTIDADES -->
-  <div class="panel" id="panel-medicion">
-    <div class="card">
-      <h2><span class="idx">03</span> Medición de cantidades</h2>
-      <p class="sub">En "Cantidad" elige m² o m³ para ingresar las medidas (largo, ancho, alto) y que el total se calcule solo. "Pendiente" se calcula como Cantidad − Ejecutada.</p>
-      <div class="table-wrap">
-        <table class="data" id="tabla-medicion">
-          <thead><tr>
-            <th class="rownum">#</th><th>Descripción</th><th style="min-width:190px;">Cantidad</th><th>Unidad</th><th>Ejecutada</th><th>Pendiente</th><th></th>
-          </tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-      <button class="btn ghost small" onclick="addRow('medicion')">+ Agregar ítem</button>
-      <div style="margin-top:18px;display:flex;justify-content:flex-end;">
-        <button class="btn" style="background:var(--moss);border-color:var(--moss);" onclick="generarExcelMedicion()">⬇ Descargar medición (Excel)</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- TAB 4: INFORME DE OBRA -->
+  <!-- TAB 2: INFORME DE OBRA -->
   <div class="panel" id="panel-informe">
     <div class="card">
-      <h2><span class="idx">04</span> Informe de obra</h2>
+      <h2><span class="idx">02</span> Informe de obra</h2>
       <p class="sub">Describe las actividades del día y deja evidencia fotográfica de antes y después.</p>
       <div class="field">
         <label>Descripción general de actividades</label>
@@ -428,7 +358,7 @@ canvas.pad{border:1px dashed var(--line);width:100%;height:130px;touch-action:no
   <!-- TAB 5: INVENTARIO -->
   <div class="panel" id="panel-inventario">
     <div class="card">
-      <h2><span class="idx">05</span> Inventario de materiales y herramientas</h2>
+      <h2><span class="idx">03</span> Inventario de materiales y herramientas</h2>
       <p class="sub">Lo que tienes disponible en obra o bodega, para saber qué hay antes de pedir algo nuevo.</p>
       <div class="table-wrap">
         <table class="data" id="tabla-inventario">
@@ -448,7 +378,7 @@ canvas.pad{border:1px dashed var(--line);width:100%;height:130px;touch-action:no
   <!-- TAB 6: CONTROL DE MAQUINARIA -->
   <div class="panel" id="panel-maquinaria">
     <div class="card">
-      <h2><span class="idx">06</span> Control de maquinaria</h2>
+      <h2><span class="idx">04</span> Control de maquinaria</h2>
       <p class="sub">Registra el uso diario de cada equipo. Cada fila admite dos rangos horarios (ej. 8 a.m.–12 p.m. y 1 p.m.–3:30 p.m.); el total de horas suma ambos rangos automáticamente.</p>
       <div class="table-wrap">
         <table class="data" id="tabla-maquinaria">
@@ -492,39 +422,8 @@ function escapeHtml(s){
   return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
 
-/* ---------- ROW TEMPLATES (acta, medicion, inventario) ---------- */
+/* ---------- ROW TEMPLATES (inventario, maquinaria) ---------- */
 const rowTemplates = {
-  acta: ()=>`
-    <td class="rownum"></td>
-    <td><input class="ac-desc" placeholder="Descripción del ítem"></td>
-    <td><input type="number" min="0" step="any" class="ac-cant" placeholder="0"></td>
-    <td><input class="ac-unidad" placeholder="Unidad"></td>
-    <td><input class="ac-obs" placeholder="Observaciones"></td>
-    <td><button class="btn-del" onclick="delRow(this,'acta')">✕</button></td>
-  `,
-  medicion: ()=>`
-    <td class="rownum"></td>
-    <td><input class="med-desc" placeholder="Ej. Muro divisorio"></td>
-    <td>
-      <div class="med-cant-wrap">
-        <select class="med-tipo">
-          <option value="directo">Directo</option>
-          <option value="m2">m² (Largo × Ancho)</option>
-          <option value="m3">m³ (Largo × Ancho × Alto)</option>
-        </select>
-        <div class="med-dims">
-          <input type="number" step="any" class="med-dim1" placeholder="Largo">
-          <input type="number" step="any" class="med-dim2" placeholder="Ancho">
-          <input type="number" step="any" class="med-dim3" placeholder="Alto" style="display:none;">
-        </div>
-        <input type="number" step="any" class="med-cantidad" placeholder="0">
-      </div>
-    </td>
-    <td><input class="med-unidad" placeholder="m², m³, ml..."></td>
-    <td><input type="number" min="0" step="any" class="med-ejecutada" placeholder="0"></td>
-    <td><input type="number" step="any" class="med-pendiente" readonly placeholder="0"></td>
-    <td><button class="btn-del" onclick="delRow(this,'medicion')">✕</button></td>
-  `,
   inventario: ()=>`
     <td class="rownum"></td>
     <td><input class="inv-desc" placeholder="Ej. Taladro percutor"></td>
@@ -565,13 +464,6 @@ function addRow(type){
   tr.innerHTML = rowTemplates[type]();
   tbody.appendChild(tr);
   renumber(type);
-  if(type==='medicion'){
-    const tipoSel = tr.querySelector('.med-tipo');
-    tipoSel.addEventListener('change', ()=>handleTipoChange(tr));
-    tr.querySelectorAll('.med-dim1,.med-dim2,.med-dim3,.med-cantidad,.med-ejecutada').forEach(inp=>{
-      inp.addEventListener('input', ()=>calcMedicion(tr));
-    });
-  }
   if(type==='maquinaria'){
     tr.querySelectorAll('.maq-hinicio1,.maq-hfinal1,.maq-hinicio2,.maq-hfinal2').forEach(inp=>{
       inp.addEventListener('input', ()=>calcMaquinaria(tr));
@@ -589,45 +481,6 @@ function delRow(btn,type){
 function renumber(type){
   const rows = document.querySelectorAll('#tabla-'+type+' tbody tr');
   rows.forEach((r,i)=>{ r.querySelector('.rownum').textContent = i+1; });
-}
-
-/* ---------- MEDICIÓN: cálculo de m² / m³ y pendiente ---------- */
-function handleTipoChange(tr){
-  const tipo = tr.querySelector('.med-tipo').value;
-  const dimsWrap = tr.querySelector('.med-dims');
-  const dim3 = tr.querySelector('.med-dim3');
-  const cantidadInput = tr.querySelector('.med-cantidad');
-  const unidadInput = tr.querySelector('.med-unidad');
-  if(tipo==='directo'){
-    dimsWrap.style.display='none';
-    cantidadInput.readOnly=false;
-  }else{
-    dimsWrap.style.display='flex';
-    dim3.style.display = tipo==='m3' ? 'block' : 'none';
-    cantidadInput.readOnly=true;
-    if(tipo==='m2') unidadInput.value='m²';
-    if(tipo==='m3') unidadInput.value='m³';
-  }
-  calcMedicion(tr);
-}
-
-function calcMedicion(tr){
-  const tipo = tr.querySelector('.med-tipo').value;
-  const cantidadInput = tr.querySelector('.med-cantidad');
-  if(tipo!=='directo'){
-    const d1 = parseFloat(tr.querySelector('.med-dim1').value)||0;
-    const d2 = parseFloat(tr.querySelector('.med-dim2').value)||0;
-    let total = d1*d2;
-    if(tipo==='m3'){
-      const d3 = parseFloat(tr.querySelector('.med-dim3').value)||0;
-      total = d1*d2*d3;
-    }
-    cantidadInput.value = total ? (Math.round(total*1000)/1000) : '';
-  }
-  const cantidad = parseFloat(cantidadInput.value)||0;
-  const ejecutada = parseFloat(tr.querySelector('.med-ejecutada').value)||0;
-  const pendiente = cantidad-ejecutada;
-  tr.querySelector('.med-pendiente').value = Math.round(pendiente*1000)/1000;
 }
 
 /* ---------- CONTROL DE MAQUINARIA: cálculo de horas (2 secciones por fila) ---------- */
@@ -668,8 +521,8 @@ function calcSumaMaquinaria(){
   if(el) el.textContent = Math.round(suma*100)/100;
 }
 
-/* seed one row for acta, medicion, inventario, maquinaria */
-['acta','medicion','inventario','maquinaria'].forEach(addRow);
+/* seed one row for inventario, maquinaria */
+['inventario','maquinaria'].forEach(addRow);
 
 /* ---------- SIGNATURE PADS ---------- */
 function setupPad(id){
@@ -1017,89 +870,6 @@ function generarPDFInforme(){
   window.print();
 }
 
-/* ---------- DESCARGA EN EXCEL (Acta de entrega) ---------- */
-function generarExcelActa(){
-  const proyecto = val('g-proyecto')||'—';
-  const fecha = val('g-fecha')||'—';
-  const consecutivo = val('g-consecutivo')||'—';
-
-  const filas = document.querySelectorAll('#tabla-acta tbody tr');
-  let filasHtml='';
-  filas.forEach((r,i)=>{
-    const desc = r.querySelector('.ac-desc').value||'—';
-    const cant = r.querySelector('.ac-cant').value||'—';
-    const unidad = r.querySelector('.ac-unidad').value||'—';
-    const obs = r.querySelector('.ac-obs').value||'—';
-    filasHtml += `<tr><td>${i+1}</td><td>${escapeHtml(desc)}</td><td>${escapeHtml(cant)}</td><td>${escapeHtml(unidad)}</td><td>${escapeHtml(obs)}</td></tr>`;
-  });
-
-  const html = `
-    <html xmlns:x="urn:schemas-microsoft-com:office:excel">
-    <head><meta charset="utf-8">
-    <style>
-      td,th{border:1px solid #ccc;padding:4px 6px;font-family:Calibri,Arial,sans-serif;font-size:11px;}
-      th{background:#0F2A3D;color:#fff;text-transform:uppercase;}
-      .tit{font-weight:bold;font-size:14px;}
-    </style>
-    </head>
-    <body>
-      <table>
-        <tr><td class="tit" colspan="5">Acta de entrega — Informe N.° ${escapeHtml(consecutivo)}</td></tr>
-        <tr><td><b>Proyecto</b></td><td colspan="2">${escapeHtml(proyecto)}</td><td><b>Fecha</b></td><td>${escapeHtml(fecha)}</td></tr>
-        <tr><td><b>Entregado por</b></td><td colspan="2">${escapeHtml(val('a-entrega-nombre')||'—')} (${escapeHtml(val('a-entrega-cargo')||'—')})</td><td><b>Recibido por</b></td><td>${escapeHtml(val('a-recibe-nombre')||'—')} (${escapeHtml(val('a-recibe-cargo')||'—')})</td></tr>
-        <tr><td><b>Fecha y hora entrega</b></td><td colspan="4">${escapeHtml(val('a-fecha')||'—')}</td></tr>
-        <tr><td colspan="5"></td></tr>
-        <tr><th>#</th><th>Descripción</th><th>Cantidad</th><th>Unidad</th><th>Observaciones</th></tr>
-        ${filasHtml}
-        <tr><td colspan="5"></td></tr>
-        <tr><td><b>Observaciones generales</b></td><td colspan="4">${escapeHtml(val('a-observaciones')||'Sin observaciones.')}</td></tr>
-      </table>
-    </body>
-    </html>
-  `;
-  descargarArchivo(html, `Acta_entrega_${consecutivo}.xls`, 'application/vnd.ms-excel');
-}
-
-/* ---------- DESCARGA EN EXCEL (Medición de cantidades) ---------- */
-function generarExcelMedicion(){
-  const proyecto = val('g-proyecto')||'—';
-  const fecha = val('g-fecha')||'—';
-  const consecutivo = val('g-consecutivo')||'—';
-
-  const filas = document.querySelectorAll('#tabla-medicion tbody tr');
-  let filasHtml='';
-  filas.forEach((r,i)=>{
-    const desc = r.querySelector('.med-desc').value||'—';
-    const cant = r.querySelector('.med-cantidad').value||'0';
-    const unidad = r.querySelector('.med-unidad').value||'—';
-    const ejecutada = r.querySelector('.med-ejecutada').value||'0';
-    const pendiente = r.querySelector('.med-pendiente').value||'0';
-    filasHtml += `<tr><td>${i+1}</td><td>${escapeHtml(desc)}</td><td>${escapeHtml(cant)}</td><td>${escapeHtml(unidad)}</td><td>${escapeHtml(ejecutada)}</td><td>${escapeHtml(pendiente)}</td></tr>`;
-  });
-
-  const html = `
-    <html xmlns:x="urn:schemas-microsoft-com:office:excel">
-    <head><meta charset="utf-8">
-    <style>
-      td,th{border:1px solid #ccc;padding:4px 6px;font-family:Calibri,Arial,sans-serif;font-size:11px;}
-      th{background:#0F2A3D;color:#fff;text-transform:uppercase;}
-      .tit{font-weight:bold;font-size:14px;}
-    </style>
-    </head>
-    <body>
-      <table>
-        <tr><td class="tit" colspan="6">Medición de cantidades — Informe N.° ${escapeHtml(consecutivo)}</td></tr>
-        <tr><td><b>Proyecto</b></td><td colspan="2">${escapeHtml(proyecto)}</td><td><b>Fecha</b></td><td colspan="2">${escapeHtml(fecha)}</td></tr>
-        <tr><td colspan="6"></td></tr>
-        <tr><th>#</th><th>Descripción</th><th>Cantidad</th><th>Unidad</th><th>Ejecutada</th><th>Pendiente</th></tr>
-        ${filasHtml}
-      </table>
-    </body>
-    </html>
-  `;
-  descargarArchivo(html, `Medicion_cantidades_${consecutivo}.xls`, 'application/vnd.ms-excel');
-}
-
 /* ---------- DESCARGA EN EXCEL (Inventario) ---------- */
 function generarExcelInventario(){
   const proyecto = val('g-proyecto')||'—';
@@ -1211,23 +981,6 @@ function exportarProyecto(){
         imagen: (img && img.style.display!=='none') ? img.src : ''
       };
     }),
-    acta: {
-      entregaNombre: val('a-entrega-nombre'), entregaCargo: val('a-entrega-cargo'),
-      recibeNombre: val('a-recibe-nombre'), recibeCargo: val('a-recibe-cargo'),
-      fecha: val('a-fecha'), observaciones: val('a-observaciones'),
-      firmaEntrega: document.getElementById('sig-entrega-img').src || '',
-      firmaRecibe: document.getElementById('sig-recibe-img').src || '',
-      items: [...document.querySelectorAll('#tabla-acta tbody tr')].map(r=>({
-        desc:r.querySelector('.ac-desc').value, cant:r.querySelector('.ac-cant').value,
-        unidad:r.querySelector('.ac-unidad').value, obs:r.querySelector('.ac-obs').value
-      }))
-    },
-    medicion: [...document.querySelectorAll('#tabla-medicion tbody tr')].map(r=>({
-      desc:r.querySelector('.med-desc').value, tipo:r.querySelector('.med-tipo').value,
-      dim1:r.querySelector('.med-dim1').value, dim2:r.querySelector('.med-dim2').value, dim3:r.querySelector('.med-dim3').value,
-      cantidad:r.querySelector('.med-cantidad').value, unidad:r.querySelector('.med-unidad').value,
-      ejecutada:r.querySelector('.med-ejecutada').value
-    })),
     informe: {
       actividades: val('i-actividades'), observaciones: val('i-observaciones'),
       fotos: [...document.querySelectorAll('.photo-pair')].map(p=>{
@@ -1299,39 +1052,6 @@ function cargarProyecto(data){
     if(p.imagen){ setImageSlot(card.querySelector('img[id$="-img"]'), card.querySelector('div[id$="-empty"]'), p.imagen); }
   });
   if((data.pedidos||[]).length===0) addPedidoEntry();
-
-  /* acta */
-  const a = data.acta || {};
-  setVal('a-entrega-nombre',a.entregaNombre); setVal('a-entrega-cargo',a.entregaCargo);
-  setVal('a-recibe-nombre',a.recibeNombre); setVal('a-recibe-cargo',a.recibeCargo);
-  setVal('a-fecha',a.fecha); setVal('a-observaciones',a.observaciones);
-  document.querySelector('#tabla-acta tbody').innerHTML=''; 
-  ((a.items&&a.items.length)?a.items:[{}]).forEach(it=>{
-    const tr = addRow('acta');
-    tr.querySelector('.ac-desc').value = it.desc||'';
-    tr.querySelector('.ac-cant').value = it.cant||'';
-    tr.querySelector('.ac-unidad').value = it.unidad||'';
-    tr.querySelector('.ac-obs').value = it.obs||'';
-  });
-  if(a.firmaEntrega) pintarFirma('sig-entrega', a.firmaEntrega);
-  if(a.firmaRecibe) pintarFirma('sig-recibe', a.firmaRecibe);
-
-  /* medicion */
-  document.querySelector('#tabla-medicion tbody').innerHTML='';
-  const medItems = (data.medicion&&data.medicion.length)?data.medicion:[{}];
-  medItems.forEach(it=>{
-    const tr = addRow('medicion');
-    tr.querySelector('.med-desc').value = it.desc||'';
-    if(it.tipo){ tr.querySelector('.med-tipo').value = it.tipo; }
-    tr.querySelector('.med-dim1').value = it.dim1||'';
-    tr.querySelector('.med-dim2').value = it.dim2||'';
-    tr.querySelector('.med-dim3').value = it.dim3||'';
-    handleTipoChange(tr);
-    if(it.tipo==='directo' || !it.tipo){ tr.querySelector('.med-cantidad').value = it.cantidad||''; }
-    tr.querySelector('.med-unidad').value = it.unidad||tr.querySelector('.med-unidad').value;
-    tr.querySelector('.med-ejecutada').value = it.ejecutada||'';
-    calcMedicion(tr);
-  });
 
   /* informe */
   const inf = data.informe || {};
