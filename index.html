@@ -37,6 +37,31 @@ body{
 }
 .wrap{max-width:1000px;margin:0 auto;padding:28px 20px 40px;}
 
+/* Backup status banner */
+.backup-status{
+  background: rgba(76,122,98,0.2);
+  border: 1px solid var(--moss);
+  color: #fff;
+  padding: 8px 14px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size: 11px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 2px;
+}
+.backup-status button{
+  background: var(--moss);
+  border: none;
+  color: #fff;
+  padding: 4px 8px;
+  font-size: 10px;
+  cursor: pointer;
+  font-family:'IBM Plex Mono',monospace;
+}
+.backup-status button:hover{background: #3b604d;}
+
 /* Title block, styled like an engineering drawing stamp */
 .titleblock{
   background:var(--vellum);
@@ -169,15 +194,6 @@ table.data tbody tr:nth-child(odd){background:rgba(15,42,61,0.02);}
 }
 .btn-del:hover{background:rgba(193,68,14,0.1);}
 
-/* Cantidad con cálculo m2 / m3 (Medición) */
-.med-cant-wrap{display:flex;flex-direction:column;gap:4px;min-width:170px;}
-.med-cant-wrap select.med-tipo{border:1px solid var(--line);padding:5px 4px;font-size:11.5px;background:#fff;}
-.med-dims{display:none;gap:4px;}
-.med-dims input{width:100% !important;font-size:11.5px !important;padding:5px 4px !important;border:1px solid var(--line) !important;background:#fff !important;}
-.med-cantidad{font-weight:600;}
-.med-cantidad[readonly]{background:var(--vellum-dim) !important;}
-.med-pendiente[readonly]{background:var(--vellum-dim) !important;color:var(--ink-dim);}
-
 /* Control de maquinaria: dos secciones de hora en la misma fila */
 .maq-time-wrap{display:flex;flex-direction:column;gap:4px;min-width:110px;}
 .maq-time-wrap .maq-time-row{display:flex;align-items:center;gap:5px;}
@@ -203,42 +219,59 @@ table.data tbody tr:nth-child(odd){background:rgba(15,42,61,0.02);}
 }
 .btn-download:hover{background:var(--amber-dark);}
 
-/* Signature pads */
-.sig-block{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:6px;}
-.sig-card{border:1px solid var(--line);padding:12px;background:#fff;}
-.sig-card label{display:block;font-size:11.5px;font-weight:600;color:var(--ink-dim);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px;}
-canvas.pad{border:1px dashed var(--line);width:100%;height:130px;touch-action:none;cursor:crosshair;background:#fff;}
-.sig-print-img{display:none;width:100%;height:130px;object-fit:contain;border:1px dashed var(--line);}
-.sig-actions{margin-top:6px;display:flex;justify-content:flex-end;}
-
-/* Photo pairs (antes/después) + Pedido registry cards */
-.photo-pair,.pedido-card{border:1px solid var(--line);background:#fff;padding:14px;margin-bottom:14px;position:relative;}
-.pedido-card .pe-slot{max-width:480px;min-height:260px;}
-.pedido-card .pe-slot img{max-height:440px;}
-.pedido-card .pe-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;}
+/* Pedido registry cards (1080x1080 / 1:1 square ratio) */
+.pedido-card{border:1px solid var(--line);background:#fff;padding:16px;margin-bottom:16px;position:relative;}
+.pedido-card .pe-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
 .pedido-card .pe-badge{
   font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--ink-dim);
   background:var(--vellum-dim);padding:3px 8px;letter-spacing:0.04em;
 }
+.pedido-grid-layout{display:grid;grid-template-columns:320px 1fr;gap:16px;align-items:start;}
+@media(max-width:768px){.pedido-grid-layout{grid-template-columns:1fr;}}
+
+/* Slot de imagen 1080x1080 (cuadrado 1:1) */
+.pedido-img-slot{
+  border:1px dashed var(--line);
+  aspect-ratio:1/1;
+  width:100%;
+  max-width:320px;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  background:var(--vellum-dim);
+}
+.pedido-img-slot .ps-label{
+  position:absolute;top:6px;left:6px;
+  font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.05em;
+  background:var(--blueprint);color:var(--vellum);padding:2px 6px;text-transform:uppercase;
+  z-index:2;
+}
+.pedido-img-slot img{
+  width:100%;height:100%;object-fit:contain;background:#fff;display:block;
+}
+.pedido-img-slot input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:3;}
+.pedido-img-slot .ps-empty{font-size:11.5px;color:var(--ink-dim);text-align:center;padding:0 10px;z-index:1;}
+
+/* Photo pairs (antes/después) */
+.photo-pair{border:1px solid var(--line);background:#fff;padding:14px;margin-bottom:14px;position:relative;}
 .photo-pair .pp-head{display:flex;gap:10px;align-items:flex-end;margin-bottom:10px;}
 .photo-pair .pp-head .field{flex:1;}
-.photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.photo-slot{border:1px dashed var(--line);min-height:230px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;background:var(--vellum-dim);}
+.photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:700px;margin:0 auto;}
+@media(max-width:600px){.photo-grid{grid-template-columns:1fr;}}
 
-/* Ajuste de imágenes 4:3 con object-fit: contain */
-.photo-grid .photo-slot{min-height:0;aspect-ratio:4/3;}
-.photo-grid .photo-slot img{width:100%;height:100%;object-fit:contain;max-width:none;max-height:none;background:#f9f9f9;}
-
+.photo-slot{border:1px dashed var(--line);aspect-ratio:4/3;max-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;background:var(--vellum-dim);}
 .photo-slot .ps-label{
   position:absolute;top:6px;left:6px;
   font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.05em;
   background:var(--blueprint);color:var(--vellum);padding:2px 7px;text-transform:uppercase;
   z-index:2;
 }
-.photo-slot img{max-width:100%;max-height:260px;display:block;object-fit:contain;}
+.photo-slot img{width:100%;height:100%;object-fit:contain;background:#f9f9f9;display:block;}
 .photo-slot input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:3;}
-.photo-slot .ps-empty{font-size:12px;color:var(--ink-dim);text-align:center;padding:0 10px;z-index:1;}
-.photo-slot .ps-empty svg{display:block;margin:0 auto 6px;}
+.photo-slot .ps-empty{font-size:11.5px;color:var(--ink-dim);text-align:center;padding:0 10px;z-index:1;}
 .pp-remove{position:absolute;top:10px;right:10px;}
 
 /* Print-only report */
@@ -246,33 +279,62 @@ canvas.pad{border:1px dashed var(--line);width:100%;height:130px;touch-action:no
 
 @media print{
   body{background:#fff !important; padding:0;}
-  .wrap, .tabs{display:none !important;}
+  .wrap, .tabs, .backup-status{display:none !important;}
   #printArea{display:block;}
   #printArea .p-page{padding:0 6mm;}
   #printArea .p-titleblock{
-    border:2px solid #0F2A3D; padding:14px 16px; margin-bottom:16px;
+    border:2px solid #0F2A3D; padding:12px 14px; margin-bottom:14px;
   }
-  #printArea .p-titleblock h1{font-family:'Space Grotesk',sans-serif;font-size:19px;color:#0F2A3D;margin:0 0 10px;text-transform:uppercase;}
+  #printArea .p-titleblock h1{font-family:'Space Grotesk',sans-serif;font-size:17px;color:#0F2A3D;margin:0 0 8px;text-transform:uppercase;}
   #printArea .p-tb-grid{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid #ccc;}
-  #printArea .p-tb-field{border-right:1px solid #ccc;border-bottom:1px solid #ccc;padding:6px 10px;}
-  #printArea .p-tb-field span.k{display:block;font-family:'IBM Plex Mono',monospace;font-size:8.5px;text-transform:uppercase;color:#666;}
-  #printArea .p-tb-field span.v{font-size:12.5px;}
-  #printArea section{page-break-inside:avoid; margin-bottom:18px;}
+  #printArea .p-tb-field{border-right:1px solid #ccc;border-bottom:1px solid #ccc;padding:5px 8px;}
+  #printArea .p-tb-field span.k{display:block;font-family:'IBM Plex Mono',monospace;font-size:8px;text-transform:uppercase;color:#666;}
+  #printArea .p-tb-field span.v{font-size:11.5px;}
+  #printArea section{page-break-inside:avoid; margin-bottom:16px;}
   #printArea h2.p-h{
-    font-family:'Space Grotesk',sans-serif;font-size:14px;color:#0F2A3D;text-transform:uppercase;
-    border-bottom:2px solid #0F2A3D;padding-bottom:6px;margin:0 0 10px;
+    font-family:'Space Grotesk',sans-serif;font-size:13px;color:#0F2A3D;text-transform:uppercase;
+    border-bottom:2px solid #0F2A3D;padding-bottom:4px;margin:0 0 8px;
   }
-  #printArea table{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:8px;}
-  #printArea table th{background:#0F2A3D;color:#fff;padding:5px 6px;text-align:left;font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;}
-  #printArea table td{border-bottom:1px solid #ddd;padding:5px 6px;font-size:11px;}
-  #printArea .p-note{font-size:11.5px;white-space:pre-wrap;border:1px solid #ddd;padding:8px;margin-bottom:8px;background:#fafafa;}
-  #printArea .p-pedido-card{page-break-inside:avoid;border:1px solid #ccc;padding:8px;margin-bottom:10px;display:grid;grid-template-columns:260px 1fr;gap:10px;}
-  #printArea .p-pedido-card img{width:100%;max-height:320px;object-fit:contain;border:1px solid #ccc;}
-  #printArea .p-pedido-card .ped-meta{font-family:'IBM Plex Mono',monospace;font-size:9px;color:#666;margin-bottom:4px;text-transform:uppercase;}
-  #printArea .p-pedido-card .ped-label{font-size:10px;font-weight:600;margin:4px 0 2px;}
-  #printArea .p-pedido-card .ped-text{font-size:11px;white-space:pre-wrap;margin:0 0 4px;}
+  #printArea table{width:100%;border-collapse:collapse;font-size:10.5px;margin-bottom:8px;}
+  #printArea table th{background:#0F2A3D;color:#fff;padding:4px 6px;text-align:left;font-family:'IBM Plex Mono',monospace;font-size:8.5px;text-transform:uppercase;}
+  #printArea table td{border-bottom:1px solid #ddd;padding:4px 6px;font-size:10.5px;}
+  #printArea .p-note{font-size:11px;white-space:pre-wrap;border:1px solid #ddd;padding:6px 8px;margin-bottom:8px;background:#fafafa;}
   
-  /* Asegurar tamaño carta para impresión y márgenes correctos */
+  /* Pedido card en PDF con imagen 1080x1080 tamaño mediano/cuadrado */
+  #printArea .p-pedido-card{
+    page-break-inside:avoid;border:1px solid #ccc;padding:10px;margin-bottom:10px;
+    display:grid;grid-template-columns:180px 1fr;gap:12px;align-items:start;
+  }
+  #printArea .p-pedido-card img{width:180px;height:180px;object-fit:contain;border:1px solid #ccc;background:#fff;}
+  #printArea .p-pedido-card .ped-meta{font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:#666;margin-bottom:4px;text-transform:uppercase;}
+  #printArea .p-pedido-card .ped-label{font-size:9.5px;font-weight:600;margin:4px 0 2px;color:#0F2A3D;}
+  #printArea .p-pedido-card .ped-text{font-size:10.5px;white-space:pre-wrap;margin:0 0 4px;}
+
+  /* -----------------------------------------------------------
+     MODIFICACIÓN: Fotos informe ajustadas en 4 espacios fijos 
+     por hoja en PDF (Alturas fijas para evitar mover márgenes)
+  -------------------------------------------------------------*/
+  #printArea .p-foto-row{
+    page-break-inside:avoid; margin-bottom:20px; border:1px solid #ddd; padding:12px; background:#fff;
+  }
+  #printArea .p-foto-title{
+    font-weight:bold; font-size:13px; margin-bottom:10px; color:#0F2A3D; text-align:center;
+  }
+  #printArea .p-foto-grid{
+    display:grid; grid-template-columns: 1fr 1fr; gap:15px;
+  }
+  #printArea .p-foto-item {
+    display:flex; flex-direction:column; height:380px; /* Altura fija para NO mover márgenes */
+  }
+  #printArea .p-foto-item img {
+    width:100%; height:100%; flex-grow:1; object-fit:contain; /* Se ajusta sin recortar ni distorsionar */
+    border:1px solid #ccc; background:#f9f9f9; display:block;
+  }
+  #printArea .p-foto-label{
+    font-size:11px; color:#666; text-transform:uppercase; text-align:center; margin-top:6px; 
+    font-family:'IBM Plex Mono',monospace; font-weight:bold; flex-shrink:0;
+  }
+
   @page{size: letter; margin:12mm;}
 }
 
@@ -283,6 +345,12 @@ canvas.pad{border:1px dashed var(--line);width:100%;height:130px;touch-action:no
 
 <div class="wrap">
 
+  <!-- Estado de copia de seguridad automática -->
+  <div class="backup-status" id="backupStatus">
+    <span>🛡️ Copia de seguridad automática activa (Guardando cambios localmente)</span>
+    <button onclick="limpiarCopiaSeguridad()">Borrar datos locales</button>
+  </div>
+
   <div class="titleblock">
     <span class="cc-bl"></span><span class="cc-br"></span>
     <div class="tb-head">
@@ -290,19 +358,19 @@ canvas.pad{border:1px dashed var(--line);width:100%;height:130px;touch-action:no
       <span class="tag">Datos generales del informe</span>
     </div>
     <div class="tb-grid">
-      <div class="tb-field"><label>Proyecto / Obra</label><input id="g-proyecto" placeholder="Nombre del proyecto"></div>
-      <div class="tb-field"><label>Ubicación</label><input id="g-ubicacion" placeholder="Dirección / frente"></div>
-      <div class="tb-field"><label>Auxiliar de ingeniería</label><input id="g-responsable" placeholder="Tu nombre"></div>
-      <div class="tb-field"><label>Contratista</label><input id="g-contratista" placeholder="Empresa contratista"></div>
-      <div class="tb-field"><label>Fecha</label><input id="g-fecha" type="date"></div>
-      <div class="tb-field"><label>N.° de informe</label><input id="g-consecutivo" placeholder="Ej. 001"></div>
-      <div class="tb-field"><label>Etapa / Actividad</label><input id="g-etapa" placeholder="Ej. Cimentación"></div>
-      <div class="tb-field"><label>Clima</label><input id="g-clima" placeholder="Ej. Soleado"></div>
+      <div class="tb-field"><label>Proyecto / Obra</label><input id="g-proyecto" placeholder="Nombre del proyecto" oninput="autoGuardar()"></div>
+      <div class="tb-field"><label>Ubicación</label><input id="g-ubicacion" placeholder="Dirección / frente" oninput="autoGuardar()"></div>
+      <div class="tb-field"><label>Auxiliar de ingeniería</label><input id="g-responsable" placeholder="Tu nombre" oninput="autoGuardar()"></div>
+      <div class="tb-field"><label>Contratista</label><input id="g-contratista" placeholder="Empresa contratista" oninput="autoGuardar()"></div>
+      <div class="tb-field"><label>Fecha</label><input id="g-fecha" type="date" oninput="autoGuardar()"></div>
+      <div class="tb-field"><label>N.° de informe</label><input id="g-consecutivo" placeholder="Ej. 001" oninput="autoGuardar()"></div>
+      <div class="tb-field"><label>Etapa / Actividad</label><input id="g-etapa" placeholder="Ej. Cimentación" oninput="autoGuardar()"></div>
+      <div class="tb-field"><label>Clima</label><input id="g-clima" placeholder="Ej. Soleado" oninput="autoGuardar()"></div>
     </div>
     <div class="tb-actions">
-      <span class="hint">Guarda tu avance para continuar después, o retoma un proyecto ya guardado</span>
-      <button class="btn-proyecto" onclick="exportarProyecto()">💾 Guardar proyecto</button>
-      <button class="btn-proyecto" onclick="document.getElementById('input-abrir-proyecto').click()">📂 Abrir proyecto</button>
+      <span class="hint">Respaldo permanente disponible en todo momento</span>
+      <button class="btn-proyecto" onclick="exportarProyecto()">💾 Guardar copia (.json)</button>
+      <button class="btn-proyecto" onclick="document.getElementById('input-abrir-proyecto').click()">📂 Cargar copia (.json)</button>
       <input type="file" id="input-abrir-proyecto" accept="application/json" style="display:none;" onchange="importarProyecto(this)">
     </div>
   </div>
@@ -314,13 +382,13 @@ canvas.pad{border:1px dashed var(--line);width:100%;height:130px;touch-action:no
     <button class="tab-btn" data-tab="maquinaria"><span class="num">04</span>Control maquinaria</button>
   </div>
 
-  <!-- TAB 1: REGISTRO DE PEDIDOS (WHATSAPP) -->
+  <!-- TAB 1: REGISTRO DE PEDIDOS -->
   <div class="panel active" id="panel-pedido">
     <div class="card">
       <h2><span class="idx">01</span> Registro de pedidos de materiales y herramientas</h2>
-      <p class="sub">Los pedidos se hacen por WhatsApp: adjunta la captura de la confirmación de cada pedido y llévales seguimiento aquí.</p>
+      <p class="sub">Adjunta la captura de confirmación del pedido de WhatsApp (formato recomendado 1080x1080px o cuadrado), número de pedido y observaciones.</p>
       <div id="pedido-registro"></div>
-      <button class="btn ghost small" onclick="addPedidoEntry()">+ Agregar pedido</button>
+      <button class="btn ghost small" onclick="addPedidoEntry(); autoGuardar();">+ Agregar pedido</button>
       <div style="margin-top:18px;display:flex;justify-content:flex-end;align-items:center;gap:12px;">
         <span style="font-size:11px;color:var(--ink-dim);font-family:'IBM Plex Mono',monospace;">Se abrirá el diálogo de impresión — elige "Guardar como PDF"</span>
         <button class="btn btn-download" onclick="generarPDFPedido()">⬇ Descargar pedido de materiales (PDF)</button>
@@ -332,22 +400,22 @@ canvas.pad{border:1px dashed var(--line);width:100%;height:130px;touch-action:no
   <div class="panel" id="panel-informe">
     <div class="card">
       <h2><span class="idx">02</span> Informe de obra</h2>
-      <p class="sub">Describe las actividades del día y deja evidencia fotográfica de antes y después.</p>
+      <p class="sub">Describe las actividades del día y realiza el registro fotográfico. Se organizará en 4 cuadrantes fijos por página en el PDF.</p>
       <div class="field">
         <label>Descripción general de actividades</label>
-        <textarea id="i-actividades" placeholder="¿Qué se ejecutó en la jornada?"></textarea>
+        <textarea id="i-actividades" placeholder="¿Qué se ejecutó en la jornada?" oninput="autoGuardar()"></textarea>
       </div>
       <div class="field">
         <label>Observaciones y detalles</label>
-        <textarea id="i-observaciones" placeholder="Novedades, riesgos, pendientes, recomendaciones..."></textarea>
+        <textarea id="i-observaciones" placeholder="Novedades, riesgos, pendientes, recomendaciones..." oninput="autoGuardar()"></textarea>
       </div>
     </div>
 
     <div class="card">
-      <h2>Evidencia fotográfica — antes / después</h2>
-      <p class="sub">Agrega un bloque por cada punto o actividad que quieras documentar.</p>
+      <h2>Registro fotográfico — antes / después</h2>
+      <p class="sub">Agrega los puntos fotográficos. Se mostrarán en espacios amplios de tamaño fijo que cubren el máximo disponible.</p>
       <div id="photo-pairs"></div>
-      <button class="btn ghost small" onclick="addPhotoPair()">+ Agregar punto fotográfico</button>
+      <button class="btn ghost small" onclick="addPhotoPair(); autoGuardar();">+ Agregar punto fotográfico</button>
       <div style="margin-top:18px;display:flex;justify-content:flex-end;align-items:center;gap:12px;">
         <span style="font-size:11px;color:var(--ink-dim);font-family:'IBM Plex Mono',monospace;">Se abrirá el diálogo de impresión — elige "Guardar como PDF"</span>
         <button class="btn" style="background:var(--rust);border-color:var(--rust);" onclick="generarPDFInforme()">⬇ Descargar informe de obra (PDF)</button>
@@ -355,7 +423,7 @@ canvas.pad{border:1px dashed var(--line);width:100%;height:130px;touch-action:no
     </div>
   </div>
 
-  <!-- TAB 5: INVENTARIO -->
+  <!-- TAB 3: INVENTARIO -->
   <div class="panel" id="panel-inventario">
     <div class="card">
       <h2><span class="idx">03</span> Inventario de materiales y herramientas</h2>
@@ -368,18 +436,18 @@ canvas.pad{border:1px dashed var(--line);width:100%;height:130px;touch-action:no
           <tbody></tbody>
         </table>
       </div>
-      <button class="btn ghost small" onclick="addRow('inventario')">+ Agregar ítem</button>
+      <button class="btn ghost small" onclick="addRow('inventario'); autoGuardar();">+ Agregar ítem</button>
       <div style="margin-top:18px;display:flex;justify-content:flex-end;">
         <button class="btn" style="background:var(--moss);border-color:var(--moss);" onclick="generarExcelInventario()">⬇ Descargar inventario (Excel)</button>
       </div>
     </div>
   </div>
 
-  <!-- TAB 6: CONTROL DE MAQUINARIA -->
+  <!-- TAB 4: CONTROL DE MAQUINARIA -->
   <div class="panel" id="panel-maquinaria">
     <div class="card">
       <h2><span class="idx">04</span> Control de maquinaria</h2>
-      <p class="sub">Registra el uso diario de cada equipo. Cada fila admite dos rangos horarios (ej. 8 a.m.–12 p.m. y 1 p.m.–3:30 p.m.); el total de horas suma ambos rangos automáticamente.</p>
+      <p class="sub">Registra el uso diario de cada equipo. Cada fila admite dos rangos horarios y calcula las horas totales automáticamente.</p>
       <div class="table-wrap">
         <table class="data" id="tabla-maquinaria">
           <thead><tr>
@@ -394,7 +462,7 @@ canvas.pad{border:1px dashed var(--line);width:100%;height:130px;touch-action:no
           </tfoot>
         </table>
       </div>
-      <button class="btn ghost small" onclick="addRow('maquinaria')">+ Agregar registro</button>
+      <button class="btn ghost small" onclick="addRow('maquinaria'); autoGuardar();">+ Agregar registro</button>
       <div style="margin-top:18px;display:flex;justify-content:flex-end;">
         <button class="btn" style="background:var(--moss);border-color:var(--moss);" onclick="generarExcelMaquinaria()">⬇ Descargar control de maquinaria (Excel)</button>
       </div>
@@ -417,40 +485,88 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
   });
 });
 
-function val(id){ return (document.getElementById(id).value || '').trim(); }
+function val(id){ const el = document.getElementById(id); return el ? (el.value || '').trim() : ''; }
 function escapeHtml(s){
-  return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  return String(s||'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+/* ---------- COPIA DE SEGURIDAD AUTOMÁTICA (LOCALSTORAGE) ---------- */
+const STORAGE_KEY = 'bitacora_obra_backup_v2';
+
+function autoGuardar(){
+  try {
+    const data = recolectarDatosProyecto();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    showBackupNotice("Cambios guardados automáticamente en copia de seguridad local.");
+  } catch(e) {
+    console.error("Error al autoguardar:", e);
+  }
+}
+
+function showBackupNotice(msg){
+  const statusEl = document.getElementById('backupStatus');
+  if(statusEl){
+    statusEl.querySelector('span').textContent = "🛡️ " + msg;
+    statusEl.style.background = "rgba(76,122,98,0.25)";
+    setTimeout(()=>{ statusEl.style.background = "rgba(76,122,98,0.2)"; }, 1500);
+  }
+}
+
+function limpiarCopiaSeguridad(){
+  if(confirm("¿Estás seguro de borrar la copia de seguridad guardada en este navegador? Se perderán los datos actuales no exportados.")){
+    localStorage.removeItem(STORAGE_KEY);
+    location.reload();
+  }
+}
+
+function cargarCopiaSeguridadAlIniciar(){
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if(saved){
+    try {
+      const data = JSON.parse(saved);
+      cargarProyectoEnFormulario(data);
+      console.log("Copia de seguridad restaurada correctamente.");
+    } catch(e) {
+      console.error("Error al restaurar copia de seguridad:", e);
+    }
+  } else {
+    // Si no hay guardado previo, agregar filas iniciales por defecto
+    ['inventario','maquinaria'].forEach(type=>addRow(type));
+    addPedidoEntry();
+    addPhotoPair();
+    document.getElementById('g-fecha').valueAsDate = new Date();
+  }
 }
 
 /* ---------- ROW TEMPLATES (inventario, maquinaria) ---------- */
 const rowTemplates = {
   inventario: ()=>`
     <td class="rownum"></td>
-    <td><input class="inv-desc" placeholder="Ej. Taladro percutor"></td>
-    <td><input type="number" min="0" step="any" class="inv-cant" placeholder="0"></td>
-    <td><input class="inv-unidad" placeholder="Unidad"></td>
-    <td><select class="inv-estado"><option>Disponible</option><option>Agotado</option><option>Por pedir</option><option>En préstamo</option></select></td>
-    <td><input class="inv-obs" placeholder="Observaciones"></td>
+    <td><input class="inv-desc" placeholder="Ej. Taladro percutor" oninput="autoGuardar()"></td>
+    <td><input type="number" min="0" step="any" class="inv-cant" placeholder="0" oninput="autoGuardar()"></td>
+    <td><input class="inv-unidad" placeholder="Unidad" oninput="autoGuardar()"></td>
+    <td><select class="inv-estado" onchange="autoGuardar()"><option>Disponible</option><option>Agotado</option><option>Por pedir</option><option>En préstamo</option></select></td>
+    <td><input class="inv-obs" placeholder="Observaciones" oninput="autoGuardar()"></td>
     <td><button class="btn-del" onclick="delRow(this,'inventario')">✕</button></td>
   `,
   maquinaria: ()=>`
     <td class="rownum"></td>
-    <td><input type="date" class="maq-fecha"></td>
-    <td><input class="maq-equipo" placeholder="Ej. Retroexcavadora"></td>
-    <td><input class="maq-remision" placeholder="N.° remisión"></td>
-    <td><input class="maq-desc" placeholder="Descripción de la actividad"></td>
-    <td><input class="maq-operador" placeholder="Nombre del operador"></td>
-    <td><input class="maq-supervisor" placeholder="Nombre del supervisor"></td>
+    <td><input type="date" class="maq-fecha" oninput="autoGuardar()"></td>
+    <td><input class="maq-equipo" placeholder="Ej. Retroexcavadora" oninput="autoGuardar()"></td>
+    <td><input class="maq-remision" placeholder="N.° remisión" oninput="autoGuardar()"></td>
+    <td><input class="maq-desc" placeholder="Descripción de la actividad" oninput="autoGuardar()"></td>
+    <td><input class="maq-operador" placeholder="Nombre del operador" oninput="autoGuardar()"></td>
+    <td><input class="maq-supervisor" placeholder="Nombre del supervisor" oninput="autoGuardar()"></td>
     <td>
       <div class="maq-time-wrap">
-        <div class="maq-time-row"><span>1</span><input type="time" class="maq-hinicio1"></div>
-        <div class="maq-time-row"><span>2</span><input type="time" class="maq-hinicio2"></div>
+        <div class="maq-time-row"><span>1</span><input type="time" class="maq-hinicio1" oninput="autoGuardar()"></div>
+        <div class="maq-time-row"><span>2</span><input type="time" class="maq-hinicio2" oninput="autoGuardar()"></div>
       </div>
     </td>
     <td>
       <div class="maq-time-wrap">
-        <div class="maq-time-row"><span>1</span><input type="time" class="maq-hfinal1"></div>
-        <div class="maq-time-row"><span>2</span><input type="time" class="maq-hfinal2"></div>
+        <div class="maq-time-row"><span>1</span><input type="time" class="maq-hfinal1" oninput="autoGuardar()"></div>
+        <div class="maq-time-row"><span>2</span><input type="time" class="maq-hfinal2" oninput="autoGuardar()"></div>
       </div>
     </td>
     <td><input type="number" step="any" class="maq-total" readonly placeholder="0"></td>
@@ -476,6 +592,7 @@ function delRow(btn,type){
   btn.closest('tr').remove();
   renumber(type);
   if(type==='maquinaria') calcSumaMaquinaria();
+  autoGuardar();
 }
 
 function renumber(type){
@@ -483,13 +600,13 @@ function renumber(type){
   rows.forEach((r,i)=>{ r.querySelector('.rownum').textContent = i+1; });
 }
 
-/* ---------- CONTROL DE MAQUINARIA: cálculo de horas (2 secciones por fila) ---------- */
+/* ---------- CONTROL DE MAQUINARIA: cálculo de horas ---------- */
 function minutosEntre(hi,hf){
   if(!hi || !hf) return 0;
   const [h1,m1] = hi.split(':').map(Number);
   const [h2,m2] = hf.split(':').map(Number);
   let mins = (h2*60+m2)-(h1*60+m1);
-  if(mins<0) mins += 24*60; // cruza la medianoche
+  if(mins<0) mins += 24*60;
   return mins;
 }
 
@@ -521,64 +638,7 @@ function calcSumaMaquinaria(){
   if(el) el.textContent = Math.round(suma*100)/100;
 }
 
-/* seed one row for inventario, maquinaria */
-['inventario','maquinaria'].forEach(addRow);
-
-/* ---------- SIGNATURE PADS ---------- */
-function setupPad(id){
-  const canvas = document.getElementById(id);
-  const img = document.getElementById(id+'-img');
-  function resize(){
-    const ratio = window.devicePixelRatio||1;
-    const w = canvas.clientWidth, h = canvas.clientHeight;
-    canvas.width = w*ratio; canvas.height = h*ratio;
-    const ctx = canvas.getContext('2d');
-    ctx.scale(ratio,ratio);
-    ctx.strokeStyle = '#0F2A3D'; ctx.lineWidth = 2; ctx.lineCap='round';
-  }
-  resize();
-  const ctx = canvas.getContext('2d');
-  let drawing=false;
-  function pos(e){
-    const rect = canvas.getBoundingClientRect();
-    const cx = (e.touches? e.touches[0].clientX : e.clientX) - rect.left;
-    const cy = (e.touches? e.touches[0].clientY : e.clientY) - rect.top;
-    return {x:cx,y:cy};
-  }
-  function start(e){ drawing=true; const p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); e.preventDefault(); }
-  function move(e){ if(!drawing) return; const p=pos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); e.preventDefault(); }
-  function end(){ if(!drawing) return; drawing=false; img.src = canvas.toDataURL('image/png'); }
-  canvas.addEventListener('mousedown',start);
-  canvas.addEventListener('mousemove',move);
-  window.addEventListener('mouseup',end);
-  canvas.addEventListener('touchstart',start,{passive:false});
-  canvas.addEventListener('touchmove',move,{passive:false});
-  canvas.addEventListener('touchend',end);
-}
-setupPad('sig-entrega');
-setupPad('sig-recibe');
-function clearSig(id){
-  const canvas = document.getElementById(id);
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  document.getElementById(id+'-img').src='';
-}
-function pintarFirma(id, dataURL){
-  if(!dataURL) return;
-  const canvas = document.getElementById(id);
-  const img = document.getElementById(id+'-img');
-  img.src = dataURL;
-  const image = new Image();
-  image.onload = ()=>{
-    const ctx = canvas.getContext('2d');
-    const ratio = window.devicePixelRatio||1;
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    ctx.drawImage(image,0,0,canvas.width/ratio,canvas.height/ratio);
-  };
-  image.src = dataURL;
-}
-
-/* ---------- REGISTRO DE PEDIDOS (WHATSAPP) ---------- */
+/* ---------- REGISTRO DE PEDIDOS (1080x1080 / 1:1) ---------- */
 let pedidoCount=0;
 function addPedidoEntry(){
   pedidoCount++;
@@ -587,26 +647,36 @@ function addPedidoEntry(){
   wrap.className='pedido-card';
   wrap.id=id;
   wrap.innerHTML = `
-    <button class="btn-del pp-remove" onclick="document.getElementById('${id}').remove()">✕</button>
-    <div class="pe-top"><span class="pe-badge">Pedido ${pedidoCount}</span></div>
-    <div class="field-row">
-      <div class="field"><label>Fecha del pedido</label><input type="date" class="pe-fecha"></div>
-      <div class="field"><label>N.° de pedido</label><input class="pe-numero" placeholder="Ej. 304"></div>
-    </div>
-    <div class="field">
-      <label>Adjuntar comprobante (captura de WhatsApp)</label>
-      <div class="photo-slot pe-slot" id="${id}-slot">
-        <span class="ps-label">Comprobante</span>
-        <div class="ps-empty" id="${id}-empty">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#5B6770" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="1"/><circle cx="8.5" cy="10.5" r="1.5"/><path d="M21 15l-5-5L5 19"/></svg>
-          Subir captura
+    <button class="btn-del pp-remove" onclick="document.getElementById('${id}').remove(); autoGuardar();">✕</button>
+    <div class="pe-top"><span class="pe-badge">Pedido N.° ${pedidoCount}</span></div>
+    <div class="pedido-grid-layout">
+      <div>
+        <div class="field"><label>Comprobante (1080x1080px)</label></div>
+        <div class="pedido-img-slot" id="${id}-slot">
+          <span class="ps-label">Captura 1:1</span>
+          <div class="ps-empty" id="${id}-empty">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5B6770" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="1"/><circle cx="8.5" cy="10.5" r="1.5"/><path d="M21 15l-5-5L5 19"/></svg>
+            Subir captura
+          </div>
+          <img id="${id}-img" style="display:none;">
+          <input type="file" accept="image/*, .heic, .HEIC, .heif, .HEIF" onchange="loadPedidoImage(this,'${id}')">
         </div>
-        <img id="${id}-img" style="display:none;">
-        <input type="file" accept="image/*, .heic, .HEIC, .heif, .HEIF" onchange="loadPedidoImage(this,'${id}')">
+      </div>
+      <div>
+        <div class="field-row" style="margin-bottom:10px;">
+          <div class="field"><label>Fecha del pedido</label><input type="date" class="pe-fecha" oninput="autoGuardar()"></div>
+          <div class="field"><label>N.° de pedido</label><input class="pe-numero" placeholder="Ej. 304" oninput="autoGuardar()"></div>
+        </div>
+        <div class="field" style="margin-bottom:10px;">
+          <label>Detalle del pedido (materiales / herramientas)</label>
+          <textarea class="pe-detalle" placeholder="Ej. Cinta de enmascarar 1&quot;: 15 rollos&#10;Sikaboom: 4 unidades..." oninput="autoGuardar()"></textarea>
+        </div>
+        <div class="field">
+          <label>Observaciones</label>
+          <textarea class="pe-obs" placeholder="Estado del pedido, novedades en la entrega, etc." oninput="autoGuardar()"></textarea>
+        </div>
       </div>
     </div>
-    <div class="field"><label>Detalle del pedido (materiales / herramientas solicitadas)</label><textarea class="pe-detalle" placeholder="Ej. Cinta de enmascarar 1&quot;: 15 rollos&#10;Sikaboom: 4 unidades..."></textarea></div>
-    <div class="field"><label>Observaciones</label><textarea class="pe-obs" placeholder="Estado del pedido, novedades en la entrega, etc."></textarea></div>
   `;
   document.getElementById('pedido-registro').appendChild(wrap);
   return wrap;
@@ -623,13 +693,13 @@ async function loadPedidoImage(input,id){
   const isHeic = file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif') || file.type === 'image/heic';
 
   if(isHeic) {
-    emptyEl.innerHTML = `<span style="font-size:12px;color:var(--amber-dark);">⏳ Procesando foto...</span>`;
+    emptyEl.innerHTML = `<span style="font-size:11px;color:var(--amber-dark);">⏳ Procesando...</span>`;
     try {
       if(typeof heic2any === 'undefined') throw new Error("heic2any no cargado");
       const convertedBlob = await heic2any({ blob: file, toType: "image/jpeg", quality: 0.8 });
       processFile = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
     } catch (e) {
-      alert("Error convirtiendo la imagen HEIC. Intenta con otro formato.");
+      alert("Error convirtiendo la imagen HEIC.");
       emptyEl.innerHTML = originalHtml;
       return;
     }
@@ -639,6 +709,7 @@ async function loadPedidoImage(input,id){
   reader.onload = e=>{ 
     setImageSlot(document.getElementById(`${id}-img`), emptyEl, e.target.result); 
     emptyEl.innerHTML = originalHtml; 
+    autoGuardar();
   };
   reader.readAsDataURL(processFile);
 }
@@ -650,9 +721,6 @@ function setImageSlot(imgEl, emptyEl, dataURL){
   if(emptyEl) emptyEl.style.display='none';
 }
 
-/* seed one pedido entry */
-addPedidoEntry();
-
 /* ---------- PHOTO PAIRS (antes/después) ---------- */
 let photoPairCount=0;
 function addPhotoPair(){
@@ -662,9 +730,9 @@ function addPhotoPair(){
   wrap.className='photo-pair';
   wrap.id=id;
   wrap.innerHTML = `
-    <button class="btn-del pp-remove" onclick="document.getElementById('${id}').remove()">✕</button>
+    <button class="btn-del pp-remove" onclick="document.getElementById('${id}').remove(); autoGuardar();">✕</button>
     <div class="pp-head">
-      <div class="field"><label>Punto / actividad documentada</label><input class="pp-caption" placeholder="Ej. Muro fachada norte"></div>
+      <div class="field"><label>Punto / actividad documentada</label><input class="pp-caption" placeholder="Ej. Muro fachada norte" oninput="autoGuardar()"></div>
     </div>
     <div class="photo-grid">
       ${photoSlot(id,'antes','Antes')}
@@ -680,7 +748,7 @@ function photoSlot(id,key,label){
     <div class="photo-slot" id="${id}-${key}-slot">
       <span class="ps-label">${label}</span>
       <div class="ps-empty" id="${id}-${key}-empty">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#5B6770" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="1"/><circle cx="8.5" cy="10.5" r="1.5"/><path d="M21 15l-5-5L5 19"/></svg>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5B6770" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="1"/><circle cx="8.5" cy="10.5" r="1.5"/><path d="M21 15l-5-5L5 19"/></svg>
         Subir foto
       </div>
       <img id="${id}-${key}-img" style="display:none;">
@@ -700,13 +768,13 @@ async function loadPhoto(input,id,key){
   const isHeic = file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif') || file.type === 'image/heic';
 
   if(isHeic) {
-    emptyEl.innerHTML = `<span style="font-size:12px;color:var(--amber-dark);">⏳ Procesando foto...</span>`;
+    emptyEl.innerHTML = `<span style="font-size:11px;color:var(--amber-dark);">⏳ Procesando...</span>`;
     try {
       if(typeof heic2any === 'undefined') throw new Error("heic2any no cargado");
       const convertedBlob = await heic2any({ blob: file, toType: "image/jpeg", quality: 0.8 });
       processFile = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
     } catch (e) {
-      alert("Error convirtiendo la imagen HEIC. Intenta con otro formato.");
+      alert("Error convirtiendo la imagen HEIC.");
       emptyEl.innerHTML = originalHtml;
       return;
     }
@@ -716,17 +784,12 @@ async function loadPhoto(input,id,key){
   reader.onload = e=>{ 
     setImageSlot(document.getElementById(`${id}-${key}-img`), emptyEl, e.target.result); 
     emptyEl.innerHTML = originalHtml; 
+    autoGuardar();
   };
   reader.readAsDataURL(processFile);
 }
 
-/* seed one photo pair */
-addPhotoPair();
-
-/* default date = today */
-document.getElementById('g-fecha').valueAsDate = new Date();
-
-/* ---------- PDF: SOLO PEDIDO DE MATERIALES ---------- */
+/* ---------- PDF: PEDIDO DE MATERIALES ---------- */
 function buildPedidoRegistroPrint(){
   const cards = document.querySelectorAll('.pedido-card');
   if(cards.length===0) return '<p style="font-size:11px;">Sin pedidos registrados.</p>';
@@ -740,7 +803,7 @@ function buildPedidoRegistroPrint(){
     const src = img && img.src && img.style.display!=='none' ? img.src : '';
     out += `
       <div class="p-pedido-card">
-        <div>${src?`<img src="${src}">`:'<div style="font-size:10px;color:#999;padding:20px;text-align:center;border:1px dashed #ccc;">Sin comprobante</div>'}</div>
+        <div>${src?`<img src="${src}">`:'<div style="font-size:9.5px;color:#999;padding:20px;text-align:center;border:1px dashed #ccc;height:140px;display:flex;align-items:center;justify-content:center;">Sin comprobante</div>'}</div>
         <div>
           <div class="ped-meta">Fecha: ${escapeHtml(fecha)} &nbsp;|&nbsp; N.° pedido: ${escapeHtml(numero)}</div>
           <div class="ped-label">Detalle del pedido</div>
@@ -771,10 +834,10 @@ function generarPDFPedido(){
         <div class="p-tb-grid">
           <div class="p-tb-field"><span class="k">Proyecto</span><span class="v">${escapeHtml(proyecto)}</span></div>
           <div class="p-tb-field"><span class="k">Ubicación</span><span class="v">${escapeHtml(ubicacion)}</span></div>
-          <div class="p-tb-field"><span class="k">Auxiliar de ingeniería</span><span class="v">${escapeHtml(responsable)}</span></div>
+          <div class="p-tb-field"><span class="k">Auxiliar</span><span class="v">${escapeHtml(responsable)}</span></div>
           <div class="p-tb-field"><span class="k">Contratista</span><span class="v">${escapeHtml(contratista)}</span></div>
           <div class="p-tb-field"><span class="k">Fecha</span><span class="v">${escapeHtml(fecha)}</span></div>
-          <div class="p-tb-field"><span class="k">N.° de informe</span><span class="v">${escapeHtml(consecutivo)}</span></div>
+          <div class="p-tb-field"><span class="k">N.° informe</span><span class="v">${escapeHtml(consecutivo)}</span></div>
           <div class="p-tb-field"><span class="k">Etapa</span><span class="v">${escapeHtml(etapa)}</span></div>
           <div class="p-tb-field"><span class="k">Clima</span><span class="v">${escapeHtml(clima)}</span></div>
         </div>
@@ -789,38 +852,30 @@ function generarPDFPedido(){
   window.print();
 }
 
-/* ---------- DESCARGA DE ARCHIVOS (Blob) ---------- */
-function descargarArchivo(contenido, nombre, tipoMime){
-  const blob = new Blob(['\ufeff', contenido], {type: tipoMime});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = nombre;
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-
-/* ---------- DESCARGA EN PDF (Informe de obra) — fotos 4:3 ---------- */
+/* ---------- PDF: INFORME DE OBRA (4 ESPACIOS FIJOS) ---------- */
 function buildFotosInformePrint(){
   const pairs = document.querySelectorAll('.photo-pair');
   if(pairs.length===0) return '<p style="font-size:11px;">Sin fotografías registradas.</p>';
   let out='';
   pairs.forEach(p=>{
-    const caption = p.querySelector('.pp-caption').value || 'Sin descripción';
+    const caption = p.querySelector('.pp-caption').value || 'Sin descripción de punto';
     const antesImg = p.querySelector(`img[id$="-antes-img"]`);
     const despuesImg = p.querySelector(`img[id$="-despues-img"]`);
     const antesSrc = antesImg && antesImg.src && antesImg.style.display!=='none' ? antesImg.src : '';
     const despuesSrc = despuesImg && despuesImg.src && despuesImg.style.display!=='none' ? despuesImg.src : '';
+    
+    // El elemento vacío ahora también escala automáticamente para no descuadrar los tamaños
     out += `
-      <div style="page-break-inside: avoid; margin-bottom: 24px; width: 100%;">
-        <div style="font-weight:bold; background:#EFEBDF; padding: 6px 10px; margin-bottom: 12px; font-size: 13px; border: 1px solid #ccc; font-family:'Inter', sans-serif;">${escapeHtml(caption)}</div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: start;">
-          <div style="text-align: center;">
-            ${antesSrc?`<img src="${antesSrc}" style="width:100%; aspect-ratio:4/3; object-fit:contain; border:1px solid #ccc; background:#f9f9f9;">`:'<div style="aspect-ratio:4/3; width:100%; border:1px dashed #ccc; display:flex; align-items:center; justify-content:center; color:#999; font-size:11px; background:#f9f9f9;">Sin foto</div>'}
-            <div style="font-size:11px; color:#666; text-transform:uppercase; margin-top:6px; font-weight:bold; font-family:'IBM Plex Mono', monospace;">Antes</div>
+      <div class="p-foto-row">
+        <div class="p-foto-title">${escapeHtml(caption)}</div>
+        <div class="p-foto-grid">
+          <div class="p-foto-item">
+            ${antesSrc?`<img src="${antesSrc}">`:'<div style="height:100%;flex-grow:1;border:1px dashed #ccc;display:flex;align-items:center;justify-content:center;color:#999;font-size:12px;background:#f9f9f9;">Sin foto antes</div>'}
+            <div class="p-foto-label">Antes</div>
           </div>
-          <div style="text-align: center;">
-            ${despuesSrc?`<img src="${despuesSrc}" style="width:100%; aspect-ratio:4/3; object-fit:contain; border:1px solid #ccc; background:#f9f9f9;">`:'<div style="aspect-ratio:4/3; width:100%; border:1px dashed #ccc; display:flex; align-items:center; justify-content:center; color:#999; font-size:11px; background:#f9f9f9;">Sin foto</div>'}
-            <div style="font-size:11px; color:#666; text-transform:uppercase; margin-top:6px; font-weight:bold; font-family:'IBM Plex Mono', monospace;">Después</div>
+          <div class="p-foto-item">
+            ${despuesSrc?`<img src="${despuesSrc}">`:'<div style="height:100%;flex-grow:1;border:1px dashed #ccc;display:flex;align-items:center;justify-content:center;color:#999;font-size:12px;background:#f9f9f9;">Sin foto después</div>'}
+            <div class="p-foto-label">Después</div>
           </div>
         </div>
       </div>
@@ -861,7 +916,7 @@ function generarPDFInforme(){
         <div class="p-note">${escapeHtml(val('i-observaciones')||'Sin observaciones.')}</div>
       </section>
       <section>
-        <h2 class="p-h">Evidencia fotográfica</h2>
+        <h2 class="p-h">Registro fotográfico</h2>
         ${buildFotosInformePrint()}
       </section>
     </div>
@@ -870,7 +925,16 @@ function generarPDFInforme(){
   window.print();
 }
 
-/* ---------- DESCARGA EN EXCEL (Inventario) ---------- */
+/* ---------- DESCARGA EXCEL ---------- */
+function descargarArchivo(contenido, nombre, tipoMime){
+  const blob = new Blob(['\uFEFF', contenido], {type: tipoMime});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = nombre;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 function generarExcelInventario(){
   const proyecto = val('g-proyecto')||'—';
   const fecha = val('g-fecha')||'—';
@@ -910,7 +974,6 @@ function generarExcelInventario(){
   descargarArchivo(html, `Inventario_${consecutivo}.xls`, 'application/vnd.ms-excel');
 }
 
-/* ---------- DESCARGA EN EXCEL (Control de maquinaria) ---------- */
 function generarExcelMaquinaria(){
   const proyecto = val('g-proyecto')||'—';
   const fecha = val('g-fecha')||'—';
@@ -962,10 +1025,10 @@ function generarExcelMaquinaria(){
   descargarArchivo(html, `Control_maquinaria_${consecutivo}.xls`, 'application/vnd.ms-excel');
 }
 
-/* ---------- GUARDAR / ABRIR PROYECTO (.json) ---------- */
-function exportarProyecto(){
-  const data = {
-    version: 1,
+/* ---------- COPIA DE SEGURIDAD Y RECOLECCIÓN ---------- */
+function recolectarDatosProyecto(){
+  return {
+    version: 2,
     global: {
       proyecto: val('g-proyecto'), ubicacion: val('g-ubicacion'), responsable: val('g-responsable'),
       contratista: val('g-contratista'), fecha: val('g-fecha'), consecutivo: val('g-consecutivo'),
@@ -1007,6 +1070,10 @@ function exportarProyecto(){
       hinicio2:r.querySelector('.maq-hinicio2').value, hfinal2:r.querySelector('.maq-hfinal2').value
     }))
   };
+}
+
+function exportarProyecto(){
+  const data = recolectarDatosProyecto();
   const nombre = `${(data.global.proyecto||'proyecto').replace(/[^a-z0-9]+/gi,'_')}_${data.global.consecutivo||'sn'}.json`;
   const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
   const url = URL.createObjectURL(blob);
@@ -1024,18 +1091,19 @@ function importarProyecto(input){
     let data;
     try{ data = JSON.parse(e.target.result); }
     catch(err){ alert('Ese archivo no es un proyecto válido (.json).'); return; }
-    cargarProyecto(data);
+    cargarProyectoEnFormulario(data);
+    autoGuardar();
     input.value='';
+    alert('Proyecto cargado exitosamente.');
   };
   reader.readAsText(file);
 }
 
 function setVal(id, value){ const el = document.getElementById(id); if(el && value!==undefined) el.value = value; }
 
-function cargarProyecto(data){
+function cargarProyectoEnFormulario(data){
   if(!data) return;
 
-  /* datos generales */
   const g = data.global || {};
   setVal('g-proyecto',g.proyecto); setVal('g-ubicacion',g.ubicacion); setVal('g-responsable',g.responsable);
   setVal('g-contratista',g.contratista); setVal('g-fecha',g.fecha); setVal('g-consecutivo',g.consecutivo);
@@ -1088,16 +1156,18 @@ function cargarProyecto(data){
     tr.querySelector('.maq-desc').value = it.desc||'';
     tr.querySelector('.maq-operador').value = it.operador||'';
     tr.querySelector('.maq-supervisor').value = it.supervisor||'';
-    // Compatibilidad con archivos antiguos (una sola hora inicio/final)
     tr.querySelector('.maq-hinicio1').value = it.hinicio1||it.hinicio||'';
     tr.querySelector('.maq-hfinal1').value = it.hfinal1||it.hfinal||'';
     tr.querySelector('.maq-hinicio2').value = it.hinicio2||'';
     tr.querySelector('.maq-hfinal2').value = it.hfinal2||'';
     calcMaquinaria(tr);
   });
-
-  alert('Proyecto cargado. Puedes seguir trabajando donde lo dejaste.');
 }
+
+// Inicializar al cargar la página
+window.addEventListener('DOMContentLoaded', ()=>{
+  cargarCopiaSeguridadAlIniciar();
+});
 </script>
 </body>
 </html>
